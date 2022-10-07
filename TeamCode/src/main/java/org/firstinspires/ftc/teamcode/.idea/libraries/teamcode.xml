@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="teamcode">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libOpenCvAndroid453-32.zip!/" />
+      <root url="jar://$PROJECT_DIR$/libOpenCvAndroid453.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
