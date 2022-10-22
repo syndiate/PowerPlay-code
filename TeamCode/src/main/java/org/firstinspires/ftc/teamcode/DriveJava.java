@@ -25,7 +25,7 @@ public class DriveJava extends LinearOpMode {
         lift = hardwareMap.get(DcMotor.class, "lift");
         claw1 = hardwareMap.get(Servo.class, "claw1");
         claw2 = hardwareMap.get(Servo.class, "claw2");
-        // Put initialization blocks here.
+        // Put initialization blocks here
         right_drive1.setDirection(DcMotorSimple.Direction.REVERSE);
         right_drive2.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
