@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import java.util.ArrayList;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Autonomous(name = "AutoJava", group = "Auto")
 public class AutoJava extends LinearOpMode
@@ -69,8 +70,7 @@ public class AutoJava extends LinearOpMode
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
-        // we dont know nanoseconds
-        robotPosition = (new Position(0, 0, 0, System.));
+        robotPosition =  new Position(DistanceUnit.INCH, 0, 0, 10, System.nanoTime());
         waitForStart();
 
         startPressed = true;
