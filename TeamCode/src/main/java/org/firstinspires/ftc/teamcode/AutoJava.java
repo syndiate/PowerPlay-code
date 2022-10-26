@@ -12,13 +12,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Autonomous(name = "AutoJava", group = "Auto")
 public class AutoJava extends LinearOpMode
 {
-    /*private DcMotor right_drive1;
+    private DcMotor right_drive1;
     private DcMotor right_drive2;
     private DcMotor left_drive1;
     private DcMotor left_drive2;
     private DcMotor lift;
     private Servo claw1;
-    private Servo claw2;*/
+    private Servo claw2;
     private Position robotPosition;
     private ArrayList<String> movements = new ArrayList<>();
     int liftPos;
@@ -30,7 +30,7 @@ public class AutoJava extends LinearOpMode
     //we may need some additional variables here ^^
 
 
-    /*
+
 
 
     private void initMotors()
@@ -50,7 +50,7 @@ public class AutoJava extends LinearOpMode
         // claw things here
         powerFactor = 0.75;
 
-    }*/
+    }
     void updateLevel(int level)
     {
         telemetry.addData("level", level);
@@ -65,12 +65,12 @@ public class AutoJava extends LinearOpMode
     @Override
     public void runOpMode()
     {
-        //initMotors();
+        initMotors();
         // camera and telemetry updates here
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
-        robotPosition =  new Position(DistanceUnit.INCH, 0, 0, 10, System.nanoTime());
+        robotPosition = new Position(DistanceUnit.INCH, 0, 0, 10, System.nanoTime());
         waitForStart();
 
         startPressed = true;
@@ -81,9 +81,12 @@ public class AutoJava extends LinearOpMode
             telemetry.addData("Y position", robotPosition.y);
             telemetry.addData("Z position", robotPosition.z);
             telemetry.addData("Acquisition time", robotPosition.acquisitionTime);
+            telemetry.update();
 
             if (startMovement)
             {
+
+                //moveBot(1, robotPosition);
                 //autonomous code here
             }
         }
