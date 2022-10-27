@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.google.android.gms.tflite.client.TfLiteInitializationOptions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -27,8 +26,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.ArrayList;
 
 @Autonomous(name = "AutoJava", group = "Auto")
-public class AutoJava extends LinearOpMode
-{
+public class AutoJava extends LinearOpMode {
     private DcMotor right_drive1;
     private DcMotor right_drive2;
     private DcMotor left_drive1;
@@ -37,8 +35,8 @@ public class AutoJava extends LinearOpMode
     private Servo claw1;
     private Servo claw2;
     private OpenCvWebcam webcam;
-    private Position robotPosition;
     private ArrayList<String> movements = new ArrayList<>();
+
     int liftPos;
     int LiftLevel;
     int move;
@@ -47,11 +45,11 @@ public class AutoJava extends LinearOpMode
     boolean startPressed = false;
     //we may need some additional variables here ^^
 
+    //final String modelName = "mobilenetv1.tflite";
+    //final Object optionsBuilder = ObjectDetector.ObjectDetectorOptions.Builder().setScoreThreshold(threshold).setMaxResults(maxResults)
 
 
-
-    private void initMotors()
-    {
+    private void initMotors() {
         right_drive1 = hardwareMap.get(DcMotor.class, "right_drive1");
         right_drive2 = hardwareMap.get(DcMotor.class, "right_drive2");
         left_drive1 = hardwareMap.get(DcMotor.class, "left_drive1");
@@ -68,27 +66,24 @@ public class AutoJava extends LinearOpMode
         powerFactor = 0.75;
 
     }
-    void updateLevel(int level)
-    {
+
+    void updateLevel(int level) {
         telemetry.addData("level", level);
         telemetry.update();
-       // webcam.stopStreaming();
+        // webcam.stopStreaming();
 
         telemetry.addData("complete", level);
         telemetry.update();
         startMovement = true;
     }
 
-    @Override
-    public void runOpMode()
-    {
-        initMotors();
-        // camera and telemetry updates here
+    void initCamera() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(new SamplePipeline());
         webcam.setMillisecondsPermissionTimeout(2500);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+
             @Override
             public void onOpened() {
                 webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
@@ -102,21 +97,24 @@ public class AutoJava extends LinearOpMode
         });
 
 
+    }
+
+    @Override
+    public void runOpMode()
+    {
+        initMotors();
+        initCamera();
 
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
-        robotPosition = new Position(DistanceUnit.INCH, 0, 0, 10, System.nanoTime());
         waitForStart();
 
         startPressed = true;
 
         while (opModeIsActive())
         {
-            telemetry.addData("X position", robotPosition.x);
-            telemetry.addData("Y position", robotPosition.y);
-            telemetry.addData("Z position", robotPosition.z);
-            telemetry.addData("Acquisition time", robotPosition.acquisitionTime);
+            telemetry.addData("X position", right_drive1.getCurrentPosition());
             telemetry.update();
 
             if (startMovement)
@@ -181,10 +179,7 @@ public class AutoJava extends LinearOpMode
 
             int position = 2;
 
-            if (midValue < leftValue)
-                position = 0;
-            else
-                position = 1;
+            position = midValue < leftValue ? 0 : 1;
 
             telemetry.addData("position", position);
             telemetry.update();
