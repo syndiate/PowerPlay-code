@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.app.Activity;
+import android.content.res.AssetFileDescriptor;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -23,37 +27,41 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import org.tensorflow.lite.Interpreter;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 @Autonomous(name = "AutoJava", group = "Auto")
 public class AutoJava extends LinearOpMode {
-    private DcMotor right_drive1;
-    private DcMotor right_drive2;
-    private DcMotor left_drive1;
-    private DcMotor left_drive2;
+    private DcMotorEx right_drive1;
+    private DcMotorEx right_drive2;
+    private DcMotorEx left_drive1;
+    private DcMotorEx left_drive2;
     private DcMotor lift;
     private Servo claw1;
     private Servo claw2;
     private OpenCvWebcam webcam;
+    protected Interpreter tflite;
     private ArrayList<String> movements = new ArrayList<>();
 
     int liftPos;
     int LiftLevel;
     int move;
     double powerFactor = 0;
+    double speed = 250;
     boolean startMovement = false;
     boolean startPressed = false;
     //we may need some additional variables here ^^
 
-    //final String modelName = "mobilenetv1.tflite";
-    //final Object optionsBuilder = ObjectDetector.ObjectDetectorOptions.Builder().setScoreThreshold(threshold).setMaxResults(maxResults)
-
-
     private void initMotors() {
-        right_drive1 = hardwareMap.get(DcMotor.class, "right_drive1");
-        right_drive2 = hardwareMap.get(DcMotor.class, "right_drive2");
-        left_drive1 = hardwareMap.get(DcMotor.class, "left_drive1");
-        left_drive2 = hardwareMap.get(DcMotor.class, "left_drive2");
+        right_drive1 = hardwareMap.get(DcMotorEx.class, "right_drive1");
+        right_drive2 = hardwareMap.get(DcMotorEx.class, "right_drive2");
+        left_drive1 = hardwareMap.get(DcMotorEx.class, "left_drive1");
+        left_drive2 = hardwareMap.get(DcMotorEx.class, "left_drive2");
         lift = hardwareMap.get(DcMotor.class, "lift");
         claw1 = hardwareMap.get(Servo.class, "claw1");
         claw2 = hardwareMap.get(Servo.class, "claw2");
@@ -127,19 +135,44 @@ public class AutoJava extends LinearOpMode {
 
 
     }
-/*
-    private void moveBot(int timeMili, float vertical, float pivot, float horizontal) {
 
+
+    private void moveBot(int distCM, float vertical, float pivot, float horizontal)
+    {
+        // change 30 to how amny tics is a CM
+        int motorTics = distCM * 30;
+
+        right_drive1.setTargetPosition(motorTics);
+        right_drive1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_drive2.setTargetPosition(motorTics);
+        right_drive2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_drive1.setTargetPosition(motorTics);
+        left_drive1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_drive2.setTargetPosition(motorTics);
+        left_drive2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        right_drive1.setVelocity(speed);
+        right_drive2.setVelocity(speed);
+        left_drive1.setVelocity(speed);
+        left_drive2.setVelocity(speed);
+
+        while(right_drive1.isBusy())
+        {
+            telemetry.addLine("Moving to target");
+            telemetry.update();
+        }
+        /*
         right_drive1.setPower(powerFactor * (-pivot + (vertical - horizontal)));
         right_drive2.setPower(powerFactor * (-pivot + vertical + horizontal));
         left_drive1.setPower(powerFactor * (pivot + vertical + horizontal));
         left_drive2.setPower(powerFactor * (pivot + (vertical - horizontal)));
-        sleep(timeMili);
         right_drive1.setPower(0);
         right_drive2.setPower(0);
         left_drive1.setPower(0);
         left_drive2.setPower(0);
-    }*/
+        */
+
+    }
 
     class SamplePipeline extends OpenCvPipeline
     {
@@ -205,6 +238,15 @@ public class AutoJava extends LinearOpMode {
             }
         }
     }
+/*
+    private MappedByteBuffer loadModelFile(Activity activity) throws IOException {
+        AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(getModelPath());
+        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel = inputStream.getChannel();
+        long startOffset = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+    }*/
 
 
 
