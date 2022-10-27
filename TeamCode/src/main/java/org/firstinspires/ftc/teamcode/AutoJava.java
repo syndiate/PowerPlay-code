@@ -1,13 +1,30 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.google.android.gms.tflite.client.TfLiteInitializationOptions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import java.util.ArrayList;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvWebcam;
+
+import java.util.ArrayList;
 
 @Autonomous(name = "AutoJava", group = "Auto")
 public class AutoJava extends LinearOpMode
@@ -19,6 +36,7 @@ public class AutoJava extends LinearOpMode
     private DcMotor lift;
     private Servo claw1;
     private Servo claw2;
+    private OpenCvWebcam webcam;
     private Position robotPosition;
     private ArrayList<String> movements = new ArrayList<>();
     int liftPos;
@@ -28,7 +46,6 @@ public class AutoJava extends LinearOpMode
     boolean startMovement = false;
     boolean startPressed = false;
     //we may need some additional variables here ^^
-
 
 
 
@@ -67,6 +84,25 @@ public class AutoJava extends LinearOpMode
     {
         initMotors();
         // camera and telemetry updates here
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam.setPipeline(new SamplePipeline());
+        webcam.setMillisecondsPermissionTimeout(2500);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addLine("Camera failed to open.");
+                telemetry.update();
+            }
+        });
+
+
+
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
@@ -93,7 +129,7 @@ public class AutoJava extends LinearOpMode
 
 
     }
-    /*
+/*
     private void moveBot(int timeMili, float vertical, float pivot, float horizontal) {
 
         right_drive1.setPower(powerFactor * (-pivot + (vertical - horizontal)));
@@ -106,6 +142,74 @@ public class AutoJava extends LinearOpMode
         left_drive1.setPower(0);
         left_drive2.setPower(0);
     }*/
+
+    class SamplePipeline extends OpenCvPipeline
+    {
+        boolean viewportPaused;
+        int count = 0;
+
+        @Override
+        public Mat processFrame(Mat input)
+        {
+            Size s = input.size();
+            int mid1 = (int)(s.width/2);
+            int mid2 = (int)(s.width);
+
+            Rect left = new Rect(new Point(0, 0), new Point(mid1, s.height));
+            Rect mid = new Rect(new Point(mid1,0),new Point(mid2, s.height));
+//            Rect right = new Rect(new Point(mid2,0),new Point(s.width, s.height));
+
+            Mat mat = new Mat();
+            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGBA2RGB);
+            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2HSV);
+            Scalar lowerBound = new Scalar(60 - 15, 100, 50);
+            Scalar upperBound = new Scalar(60 + 15, 255, 255);
+            Core.inRange(mat, lowerBound, upperBound, mat);
+//            // -- DIVIDE --
+            Mat leftMat = mat.submat(left);
+            Mat midMat = mat.submat(mid);
+//            Mat rightMat = mat.submat(right);
+
+//            // -- AVERAGE --
+            double leftValue = Math.round(Core.mean(leftMat).val[0]);
+            double midValue = Math.round(Core.mean(midMat).val[0] );
+//            double rightValue = Math.round(Core.mean(rightMat).val[0] );
+            leftMat.release();
+            midMat.release();
+//            rightMat.release();
+            mat.release();
+
+            int position = 2;
+
+            if (midValue < leftValue)
+                position = 0;
+            else
+                position = 1;
+
+            telemetry.addData("position", position);
+            telemetry.update();
+            if (startPressed)
+                count++;
+            if (count == 1) updateLevel(position);
+
+            return input;
+        }
+
+        @Override
+        public void onViewportTapped()
+        {
+            viewportPaused = !viewportPaused;
+
+            if(viewportPaused)
+            {
+                webcam.pauseViewport();
+            }
+            else
+            {
+                webcam.resumeViewport();
+            }
+        }
+    }
 
 
 
