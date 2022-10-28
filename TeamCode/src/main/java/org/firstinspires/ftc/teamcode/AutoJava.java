@@ -139,6 +139,12 @@ public class AutoJava extends LinearOpMode {
 
     private void moveBot(int distIN, float vertical, float pivot, float horizontal)
     {
+
+        right_drive1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_drive2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_drive1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_drive2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         // change 30 to how many tics is a IN
         int motorTics = distIN * 30;
 
@@ -161,6 +167,22 @@ public class AutoJava extends LinearOpMode {
             telemetry.addLine("Moving to target");
             telemetry.update();
         }
+
+    }
+
+    private void clawBot(boolean grab) {
+
+        if (grab) {
+            claw1.setPosition(1);
+            claw2.setPosition(-1);
+        } else {
+            claw1.setPosition(0);
+            claw2.setPosition(0);
+        }
+
+    }
+
+    private void liftBot() {
 
     }
 

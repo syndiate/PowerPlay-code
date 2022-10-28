@@ -23,5 +23,6 @@ dependencies {
     implementation project(':FtcRobotController')
 	implementation 'org.openftc:easyopencv:1.5.2'
     implementation 'org.tensorflow:tensorflow-lite:+'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:2.3.0'
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }
