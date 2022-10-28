@@ -137,10 +137,10 @@ public class AutoJava extends LinearOpMode {
     }
 
 
-    private void moveBot(int distCM, float vertical, float pivot, float horizontal)
+    private void moveBot(int distIN, float vertical, float pivot, float horizontal)
     {
-        // change 30 to how amny tics is a CM
-        int motorTics = distCM * 30;
+        // change 30 to how many tics is a IN
+        int motorTics = distIN * 30;
 
         right_drive1.setTargetPosition(motorTics);
         right_drive1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -156,21 +156,11 @@ public class AutoJava extends LinearOpMode {
         left_drive1.setVelocity(speed);
         left_drive2.setVelocity(speed);
 
-        while(right_drive1.isBusy())
+        while (right_drive1.isBusy())
         {
             telemetry.addLine("Moving to target");
             telemetry.update();
         }
-        /*
-        right_drive1.setPower(powerFactor * (-pivot + (vertical - horizontal)));
-        right_drive2.setPower(powerFactor * (-pivot + vertical + horizontal));
-        left_drive1.setPower(powerFactor * (pivot + vertical + horizontal));
-        left_drive2.setPower(powerFactor * (pivot + (vertical - horizontal)));
-        right_drive1.setPower(0);
-        right_drive2.setPower(0);
-        left_drive1.setPower(0);
-        left_drive2.setPower(0);
-        */
 
     }
 
