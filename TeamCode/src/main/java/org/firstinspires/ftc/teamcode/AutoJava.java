@@ -175,7 +175,7 @@ public class AutoJava extends LinearOpMode {
             claw2.setPosition(-1);
     }
     
-    private openClaw()
+    private void openClaw()
     {
             claw1.setPosition(0);
             claw2.setPosition(0);
