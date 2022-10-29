@@ -52,7 +52,7 @@ public class AutoJava extends LinearOpMode {
     int LiftLevel;
     int move;
     double powerFactor = 0;
-    double speed = 250;
+    double speed = 0.5;
     boolean startMovement = false;
     boolean startPressed = false;
     //we may need some additional variables here ^^
@@ -70,6 +70,10 @@ public class AutoJava extends LinearOpMode {
         right_drive2.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_drive1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_drive2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_drive1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_drive2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // claw things here
         powerFactor = 0.75;
 
@@ -113,9 +117,10 @@ public class AutoJava extends LinearOpMode {
         initMotors();
         initCamera();
 
-
+        
         telemetry.addLine("Waiting for start");
         telemetry.update();
+        
         waitForStart();
 
         startPressed = true;
@@ -140,11 +145,6 @@ public class AutoJava extends LinearOpMode {
     private void moveBot(int distIN, float vertical, float pivot, float horizontal)
     {
 
-        right_drive1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_drive2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_drive1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_drive2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         // change 30 to how many tics is a IN
         int motorTics = distIN * 30;
 
@@ -156,11 +156,10 @@ public class AutoJava extends LinearOpMode {
         left_drive1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         left_drive2.setTargetPosition(motorTics);
         left_drive2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        right_drive1.setVelocity(speed);
-        right_drive2.setVelocity(speed);
-        left_drive1.setVelocity(speed);
-        left_drive2.setVelocity(speed);
+        right_drive1.setVelocity(speed * (-pivot + (vertical - horizontal)));
+        right_drive2.setVelocity((speed * (-pivot + vertical + horizontal)));
+        left_drive1.setVelocity((speed * (pivot + vertical + horizontal)));
+        left_drive2.setVelocity(speed * (pivot + (vertical - horizontal)));
 
         while (right_drive1.isBusy())
         {
@@ -170,19 +169,20 @@ public class AutoJava extends LinearOpMode {
 
     }
 
-    private void clawBot(boolean grab) {
-
-        if (grab) {
+    private void closeClaw() 
+    {
             claw1.setPosition(1);
             claw2.setPosition(-1);
-        } else {
+    }
+    
+    private openClaw()
+    {
             claw1.setPosition(0);
             claw2.setPosition(0);
-        }
-
     }
-
-    private void liftBot() {
+    
+    private void liftBot() 
+    {
 
     }
 
