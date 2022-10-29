@@ -55,6 +55,7 @@ public class AutoJava extends LinearOpMode {
     double speed = 250;
     boolean startMovement = false;
     boolean startPressed = false;
+    bool clawClosed = false;
     //we may need some additional variables here ^^
 
     private void initMotors() {
@@ -70,6 +71,11 @@ public class AutoJava extends LinearOpMode {
         right_drive2.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // stop and reset encoder goes in init motors don't change
+        right_drive1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_drive2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_drive1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_drive2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // claw things here
         powerFactor = 0.75;
 
@@ -140,21 +146,17 @@ public class AutoJava extends LinearOpMode {
     private void moveBot(int distIN, float vertical, float pivot, float horizontal)
     {
 
-        right_drive1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_drive2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_drive1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_drive2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+   
         // change 30 to how many tics is a IN
         int motorTics = distIN * 30;
-
-        right_drive1.setTargetPosition(motorTics);
+        // because of how the wheel are we need to have something like this we will test it out
+        right_drive1.setTargetPosition(motorTics * (powerFactor * (-pivot + (vertical - horizontal))));
         right_drive1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_drive2.setTargetPosition(motorTics);
+        right_drive2.setTargetPosition(motorTics * (powerFactor * (-pivot + vertical + horizontal)));
         right_drive2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_drive1.setTargetPosition(motorTics);
+        left_drive1.setTargetPosition(motorTics * (powerFactor * (pivot + vertical + horizontal)));
         left_drive1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_drive2.setTargetPosition(motorTics);
+        left_drive2.setTargetPosition(motorTics * (powerFactor * (pivot + (vertical - horizontal))));
         left_drive2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         right_drive1.setVelocity(speed);
@@ -170,19 +172,24 @@ public class AutoJava extends LinearOpMode {
 
     }
 
-    private void clawBot(boolean grab) {
-
-        if (grab) {
+    private void clawBot() 
+    {
+        // other claw function didn't work cause you would awlays need to call it to be closed 
+        clawClosed = !clawClosed;
+        if (clawClosed) 
+        {
             claw1.setPosition(1);
             claw2.setPosition(-1);
-        } else {
+        } else 
+        {
             claw1.setPosition(0);
             claw2.setPosition(0);
         }
 
     }
 
-    private void liftBot() {
+    private void liftBot() 
+    {
 
     }
 
