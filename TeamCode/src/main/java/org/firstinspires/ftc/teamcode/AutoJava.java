@@ -55,7 +55,7 @@ public class AutoJava extends LinearOpMode {
     double speed = 250;
     boolean startMovement = false;
     boolean startPressed = false;
-    bool clawClosed = false;
+    boolean clawClosed = false;
     //we may need some additional variables here ^^
 
     private void initMotors() {
@@ -146,17 +146,17 @@ public class AutoJava extends LinearOpMode {
     private void moveBot(int distIN, float vertical, float pivot, float horizontal)
     {
 
-   
+
         // change 30 to how many tics is a IN
         int motorTics = distIN * 30;
         // because of how the wheel are we need to have something like this we will test it out
-        right_drive1.setTargetPosition(motorTics * (powerFactor * (-pivot + (vertical - horizontal))));
+        right_drive1.setTargetPosition((int)(motorTics * (powerFactor * (-pivot + (vertical - horizontal)))));
         right_drive1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_drive2.setTargetPosition(motorTics * (powerFactor * (-pivot + vertical + horizontal)));
+        right_drive2.setTargetPosition((int)(motorTics * (powerFactor * (-pivot + vertical + horizontal))));
         right_drive2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_drive1.setTargetPosition(motorTics * (powerFactor * (pivot + vertical + horizontal)));
+        left_drive1.setTargetPosition((int)(motorTics * (powerFactor * (pivot + vertical + horizontal))));
         left_drive1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_drive2.setTargetPosition(motorTics * (powerFactor * (pivot + (vertical - horizontal))));
+        left_drive2.setTargetPosition((int)(motorTics * (powerFactor * (pivot + (vertical - horizontal)))));
         left_drive2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         right_drive1.setVelocity(speed);
@@ -172,15 +172,15 @@ public class AutoJava extends LinearOpMode {
 
     }
 
-    private void clawBot() 
+    private void clawBot()
     {
-        // other claw function didn't work cause you would awlays need to call it to be closed 
+        // other claw function didn't work cause you would always need to call it to be closed
         clawClosed = !clawClosed;
-        if (clawClosed) 
+        if (clawClosed)
         {
             claw1.setPosition(1);
             claw2.setPosition(-1);
-        } else 
+        } else
         {
             claw1.setPosition(0);
             claw2.setPosition(0);
@@ -188,7 +188,7 @@ public class AutoJava extends LinearOpMode {
 
     }
 
-    private void liftBot() 
+    private void liftBot()
     {
 
     }
