@@ -1,4 +1,12 @@
-/*package org.firstinspires.ftc.teamcode.tensorDetect;
+// FINISH UP THIS!!!!
+
+package org.firstinspires.ftc.teamcode.tensorDetect;
+
+import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 
 import org.tensorflow.lite.Interpreter;
 import org.tensorflow.lite.InterpreterApi;
@@ -7,20 +15,23 @@ import org.tensorflow.lite.gpu.GpuDelegate;
 import org.tensorflow.lite.support.model.Model;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.util.List;
 
 
-public class DetectCone {
+public class DetectCone extends Application {
 
-    private static final String INPUT_NAME = "image_tensor";
+    private static final String INPUT_NAME = "cone.tflite";
     private static final int MAX_RESULTS = 1;
-
+/*
     private Graph graph;
 
-    Interpreter interpreter = new Interpreter(file_of_a_tensorflowlite_model);
+    Interpreter interpreter = new Interpreter(1);
 
     public DetectCone(File graphFile, File labelFile) throws IOException {
         InputStream graphInputStream = Files.newInputStream(graphFile.toPath());
@@ -32,22 +43,22 @@ public class DetectCone {
         InputStream graphInputStream = Files.newInputStream(graphFile.toPath());
         InputStream
 
+    }*/
+
+
+    private MappedByteBuffer loadModelFile(Activity activity) throws IOException {
+        AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(INPUT_NAME);
+        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel = inputStream.getChannel();
+        long startOffset = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
     }
-
-
-    // Init interpreter with GPU delegate
-    MyClassifierModel myImageClassifier = null;
-
-    CompatibilityList compatList = CompatibilityList();
-    private Model.Options options = compatList.isDelegateSupportedOnThisDevice()
-            ? Model.Options.Builder().setDevice(Model.Device.GPU).build()
-            : Model.Options.Builder().setNumThreads(4).build();
-    MyModel myModel = new MyModel.newInstance(context, options);
 
 }
 
 
-*/
+
 
 
 

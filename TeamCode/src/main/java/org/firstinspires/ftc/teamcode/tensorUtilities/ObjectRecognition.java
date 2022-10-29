@@ -18,7 +18,8 @@ public class ObjectRecognition {
         this.id = id;
         this.title = title;
         this.confidence = confidence;
-        this.location = location;
+        // error popping up here, may be exclusive to my home computer
+        //this.location = location;
     }
 
     public String getId() {
@@ -37,9 +38,7 @@ public class ObjectRecognition {
         return new RectProperties(location);
     }
 
-    public void setLocation(RectProperties location) {
-        this.location = location;
-    }
+    /* public void setLocation(RectProperties location) { this.location = location; } */
 
     @Override
     public String toString() {
