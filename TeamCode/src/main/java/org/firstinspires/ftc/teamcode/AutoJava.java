@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.app.Activity;
-import android.content.res.AssetFileDescriptor;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,29 +8,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvWebcam;
 
-import org.tensorflow.lite.Interpreter;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 @Autonomous(name = "AutoJava", group = "Auto")
@@ -44,12 +24,14 @@ public class AutoJava extends LinearOpMode {
     private DcMotor lift;
     private Servo claw1;
     private Servo claw2;
-    private OpenCvWebcam webcam;
-    protected Interpreter tflite;
     private ArrayList<String> movements = new ArrayList<>();
+    private volatile SleeveDetection.ParkingPosition pos;
+    
+    SleeveDetection sleeveDetection;
+    OpenCvCamera camera;
+    String webcamName = "Webcam 1";
 
-    int liftPos;
-    int LiftLevel;
+
     int move;
     double powerFactor = 0;
     double speed = 250;
@@ -81,43 +63,36 @@ public class AutoJava extends LinearOpMode {
 
     }
 
-    void updateLevel(int level) {
-        telemetry.addData("level", level);
-        telemetry.update();
-        // webcam.stopStreaming();
-
-        telemetry.addData("complete", level);
-        telemetry.update();
-        startMovement = true;
-    }
-
-    void initCamera() {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        webcam.setPipeline(new SamplePipeline());
-        webcam.setMillisecondsPermissionTimeout(2500);
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-
-            @Override
-            public void onOpened() {
-                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                telemetry.addLine("Camera failed to open.");
-                telemetry.update();
-            }
-        });
-
-
-    }
 
     @Override
     public void runOpMode()
     {
         initMotors();
-        initCamera();
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
+        sleeveDetection = new SleeveDetection();
+        camera.setPipeline(sleeveDetection);
+
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                camera.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+            }
+
+            @Override
+            public void onError(int errorCode) {}
+        });
+
+        while (!isStarted()) {
+
+            telemetry.addData("YCM: ", sleeveDetection.getYelPercent() + " " +
+                    sleeveDetection.getCyaPercent() + " " + sleeveDetection.getMagPercent());
+            telemetry.addData("ROTATION1: ", sleeveDetection.getPosition());
+            telemetry.update();
+            pos = sleeveDetection.getPosition();
+        }
 
 
         telemetry.addLine("Waiting for start");
@@ -128,7 +103,7 @@ public class AutoJava extends LinearOpMode {
 
         while (opModeIsActive())
         {
-            telemetry.addData("X position", right_drive1.getCurrentPosition());
+
             telemetry.update();
 
             if (startMovement)
@@ -192,72 +167,6 @@ public class AutoJava extends LinearOpMode {
     {
 
     }
-
-    class SamplePipeline extends OpenCvPipeline
-    {
-        boolean viewportPaused;
-        int count = 0;
-
-        @Override
-        public Mat processFrame(Mat input)
-        {
-            Size s = input.size();
-            int mid1 = (int)(s.width/2);
-            int mid2 = (int)(s.width);
-
-            Rect left = new Rect(new Point(0, 0), new Point(mid1, s.height));
-            Rect mid = new Rect(new Point(mid1,0),new Point(mid2, s.height));
-//            Rect right = new Rect(new Point(mid2,0),new Point(s.width, s.height));
-
-            Mat mat = new Mat();
-            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGBA2RGB);
-            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2HSV);
-            Scalar lowerBound = new Scalar(60 - 15, 100, 50);
-            Scalar upperBound = new Scalar(60 + 15, 255, 255);
-            Core.inRange(mat, lowerBound, upperBound, mat);
-//            // -- DIVIDE --
-            Mat leftMat = mat.submat(left);
-            Mat midMat = mat.submat(mid);
-//            Mat rightMat = mat.submat(right);
-
-//            // -- AVERAGE --
-            double leftValue = Math.round(Core.mean(leftMat).val[0]);
-            double midValue = Math.round(Core.mean(midMat).val[0] );
-//            double rightValue = Math.round(Core.mean(rightMat).val[0] );
-            leftMat.release();
-            midMat.release();
-//            rightMat.release();
-            mat.release();
-
-            int position = 2;
-
-            position = midValue < leftValue ? 0 : 1;
-
-            telemetry.addData("position", position);
-            telemetry.update();
-            if (startPressed)
-                count++;
-            if (count == 1) updateLevel(position);
-
-            return input;
-        }
-
-        @Override
-        public void onViewportTapped()
-        {
-            viewportPaused = !viewportPaused;
-
-            if(viewportPaused)
-            {
-                webcam.pauseViewport();
-            }
-            else
-            {
-                webcam.resumeViewport();
-            }
-        }
-    }
-
 
 
 }
