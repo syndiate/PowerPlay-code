@@ -1,8 +1,8 @@
 
 
-        package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode;
 
-        import org.opencv.core.Core;
+import org.opencv.core.Core;
         import org.opencv.core.CvType;
         import org.opencv.core.Mat;
         import org.opencv.core.Point;
@@ -34,22 +34,21 @@ public class SleeveDetection extends OpenCvPipeline {
 
     // Lower and upper boundaries for colors
     private static final Scalar
-            lower_yellow_bounds  = new Scalar(96, 105, 51, 255),
-            upper_yellow_bounds  = new Scalar(249, 255, 187, 255),
-            lower_cyan_bounds    = new Scalar(57, 87, 140, 255),
-            upper_cyan_bounds    = new Scalar(172, 234, 255, 255),
-            lower_magenta_bounds = new Scalar(77, 21, 44, 255),
-            upper_magenta_bounds = new Scalar(201, 122, 189, 255);
+            lower_red_bounds  = new Scalar(114, 20, 36, 255),
+            upper_red_bounds  = new Scalar(255, 13, 53, 255),
+            //lower_cyan_bounds    = new Scalar(57, 87, 140, 255),
+            //upper_cyan_bounds    = new Scalar(172, 234, 255, 255),
+            lower_blue_bounds = new Scalar(13, 20, 80, 255),
+            upper_blue_bounds = new Scalar(46, 137, 255, 255);
 
     // Color definitions
     private final Scalar
-            YELLOW  = new Scalar(255, 255, 0),
-            CYAN    = new Scalar(0, 255, 255),
-            MAGENTA = new Scalar(255, 0, 0);
+            RED  = new Scalar(255, 0, 0),
+            BLUE    = new Scalar(0, 0, 255);
 
     // Percent and mat definitions
-    private double yelPercent, cyaPercent, magPercent;
-    private Mat yelMat = new Mat(REGION_WIDTH, REGION_HEIGHT, CvType.CV_16UC4), cyaMat = new Mat(REGION_WIDTH, REGION_HEIGHT, CvType.CV_16UC4), magMat = new Mat(REGION_WIDTH, REGION_HEIGHT, CvType.CV_16UC4), blurredMat = new Mat(), kernel = new Mat();
+    private double redPercent, bluePercent;
+    private Mat redMat = new Mat(REGION_WIDTH, REGION_HEIGHT, CvType.CV_16UC4), blueMat = new Mat(REGION_WIDTH, REGION_HEIGHT, CvType.CV_16UC4), blurredMat = new Mat(), kernel = new Mat();
 
     // Anchor point definitions
     Point sleeve_pointA = new Point(
@@ -73,56 +72,44 @@ public class SleeveDetection extends OpenCvPipeline {
         Imgproc.morphologyEx(blurredMat, blurredMat, Imgproc.MORPH_CLOSE, kernel);
 
         // Gets channels from given source mat
-        Core.inRange(blurredMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
-        Core.inRange(blurredMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
-        Core.inRange(blurredMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
+        Core.inRange(blurredMat, lower_red_bounds, upper_red_bounds, redMat);
+        Core.inRange(blurredMat, lower_blue_bounds, upper_blue_bounds, blueMat);
 
         //Imgproc.cvtColor(input.rgba());
         // Gets color specific values
 
-        yelPercent = Core.countNonZero(yelMat);
-        cyaPercent = Core.countNonZero(cyaMat);
-        magPercent = Core.countNonZero(magMat);
+        redPercent = Core.countNonZero(redMat);
+        bluePercent = Core.countNonZero(blueMat);
 
         // Calculates the highest amount of pixels being covered on each side
-        double maxPercent = Math.max(yelPercent, Math.max(cyaPercent, magPercent));
+        double maxPercent = Math.max(redPercent, bluePercent);
 
         // Checks all percentages, will highlight bounding box in camera preview
         // based on what color is being detected
-        if (maxPercent == yelPercent) {
+        if (maxPercent == redPercent) {
             position = ParkingPosition.LEFT;
             Imgproc.rectangle(
                     input,
                     sleeve_pointA,
                     sleeve_pointB,
-                    YELLOW,
+                    RED,
                     2
             );
-        } else if (maxPercent == cyaPercent) {
+        } else if (maxPercent == bluePercent) {
             position = ParkingPosition.CENTER;
             Imgproc.rectangle(
                     input,
                     sleeve_pointA,
                     sleeve_pointB,
-                    CYAN,
-                    2
-            );
-        } else if (maxPercent == magPercent) {
-            position = ParkingPosition.RIGHT;
-            Imgproc.rectangle(
-                    input,
-                    sleeve_pointA,
-                    sleeve_pointB,
-                    MAGENTA,
+                    BLUE,
                     2
             );
         }
 
         // Memory cleanup
         blurredMat.release();
-        yelMat.release();
-        cyaMat.release();
-        magMat.release();
+        redMat.release();
+        blueMat.release();
         kernel.release();
 
         return input;
@@ -133,16 +120,12 @@ public class SleeveDetection extends OpenCvPipeline {
         return position;
     }
 
-    public double getYelPercent() {
-        return yelPercent;
+    public double getRedPercent() {
+        return redPercent;
     }
 
-    public double getCyaPercent() {
-        return cyaPercent;
-    }
-
-    public double getMagPercent() {
-        return magPercent;
+    public double getBluePercent() {
+        return bluePercent;
     }
 
 }

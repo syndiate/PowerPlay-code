@@ -37,8 +37,7 @@ public class VisionTest extends LinearOpMode {
         });
 
         while (!isStarted()) {
-            telemetry.addData("YCM: ", sleeveDetection.getYelPercent() + " " +
-                    sleeveDetection.getCyaPercent() + " " + sleeveDetection.getMagPercent());
+            telemetry.addData("YCM: ", sleeveDetection.getRedPercent() + " " + sleeveDetection.getBluePercent());
             telemetry.addData("ROTATION1: ", sleeveDetection.getPosition());
             telemetry.update();
         }

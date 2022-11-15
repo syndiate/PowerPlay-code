@@ -87,8 +87,7 @@ public class AutoJava extends LinearOpMode {
 
         while (!isStarted()) {
 
-            telemetry.addData("YCM: ", sleeveDetection.getYelPercent() + " " +
-                    sleeveDetection.getCyaPercent() + " " + sleeveDetection.getMagPercent());
+            telemetry.addData("YCM: ", sleeveDetection.getRedPercent() + " " + sleeveDetection.getBluePercent());
             telemetry.addData("ROTATION1: ", sleeveDetection.getPosition());
             telemetry.update();
             pos = sleeveDetection.getPosition();
@@ -108,7 +107,8 @@ public class AutoJava extends LinearOpMode {
 
             if (startMovement)
             {
-
+                moveBot(1, 0, 0, 1);
+                break;
                 //moveBot(1, robotPosition);
                 //autonomous code here
             }
@@ -123,8 +123,9 @@ public class AutoJava extends LinearOpMode {
 
 
         // change 30 to how many tics is a IN
-        int motorTics = distIN * 30;
+        int motorTics = distIN/* * 30;*/;
         // because of how the wheel are we need to have something like this we will test it out
+
         right_drive1.setTargetPosition((int)(motorTics * (powerFactor * (-pivot + (vertical - horizontal)))));
         right_drive1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_drive2.setTargetPosition((int)(motorTics * (powerFactor * (-pivot + vertical + horizontal))));
@@ -153,8 +154,8 @@ public class AutoJava extends LinearOpMode {
         clawClosed = !clawClosed;
         if (clawClosed)
         {
-            claw1.setPosition(1);
-            claw2.setPosition(-1);
+            claw1.setPosition(-0.75);
+            claw2.setPosition(0.75);
         } else
         {
             claw1.setPosition(0);
@@ -397,8 +398,17 @@ public class AutoJava extends LinearOpMode
             Mat mat = new Mat();
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGBA2RGB);
             Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2HSV);
-            Scalar lowerBound = new Scalar(60 - 15, 100, 50);
-            Scalar upperBound = new Scalar(60 + 15, 255, 255);
+            // blue cone
+            Scalar lowerBound = new Scalar(35, 44, 104);
+            Scalar upperBound = new Scalar(81, 104, 255);
+            // red cone
+
+            //Scalar lowerBound = new Scalar(115 ,11, 26);
+            //Scalar upperBound = new Scalar(255, 23, 46);
+
+
+            //Scalar lowerBound = new Scalar(60 - 15, 100, 50);
+            //Scalar upperBound = new Scalar(60 + 15, 255, 255);
             Core.inRange(mat, lowerBound, upperBound, mat);
 //            // -- DIVIDE --
             Mat leftMat = mat.submat(left);
