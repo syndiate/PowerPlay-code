@@ -33,9 +33,8 @@ public class AutoJava extends LinearOpMode {
     String webcamName = "Webcam 1";
 
 
-    double powerFactor = 0;
-    double speed = 105;
-    boolean startMovement = false;
+    double powerFactor = 1;
+    double startingPF = 0;
     boolean startPressed = false;
     boolean clawClosed = false;
     //we may need some additional variables here ^^
@@ -57,6 +56,7 @@ public class AutoJava extends LinearOpMode {
         // stop and reset encoder goes in init motors don't change
         // claw things here
         powerFactor = 1;
+        startingPF = powerFactor;
     }
 
 
@@ -101,19 +101,33 @@ public class AutoJava extends LinearOpMode {
         while (opModeIsActive())
         {
                 if(!stop) {
-
-                    moveBot(30, 1, 0, 0);
-                    //moveBot(13, 0, 0, -1);
+                    clawBot();
+                    liftCone(0);
+                    moveBot(25, 1, 0, 0);
+                    moveBot(14, 0, 0, -1);
+                    liftCone(2);
+                    powerFactor = 0.25;
+                    moveBot(2, 1, 0, 0);
+                    sleep(1500);
+                    clawBot();
+                    moveBot(2, -1, 0, 0);
+                    liftCone(-1);
+                    powerFactor = startingPF;
                     switch (pos) {
                         case LEFT: {
-                            moveBot(24, 0, 0, -1);
+                            moveBot(11, 0, 0, -1);
                             break;
                         }
+                        case CENTER:
+                        {
+                            moveBot(13, 0, 0, 1);
+                        }
                         case RIGHT: {
-                            moveBot(24, 0, 0, 1);
+                            moveBot(37, 0, 0, 1);
                             break;
                         }
                     }
+
                     stop = true;
 
 
@@ -131,24 +145,19 @@ public class AutoJava extends LinearOpMode {
 
         // 23 motor tics = 1 IN
         int motorTics;
-        if(horizontal >= 0) {
-            motorTics = left_drive1.getCurrentPosition() + (distIN * 23);
-        }else
-        {
-            motorTics = right_drive1.getCurrentPosition() + (distIN * 23);
-        }
-
+        int posNeg = (vertical >= 0) ? 1 : -1;
         right_drive1.setPower(powerFactor * (-pivot + (vertical - horizontal)));
         right_drive2.setPower(powerFactor * (-pivot + vertical + horizontal));
         left_drive1.setPower(powerFactor * (pivot + vertical + horizontal));
         left_drive2.setPower(powerFactor * (pivot + (vertical - horizontal)));
         if(horizontal >= 0) {
-           while ((left_drive1.getCurrentPosition() < motorTics) && opModeIsActive())
-           {
-               telemetry.addData("pos:", left_drive1.getCurrentPosition());
-               telemetry.update();
-           }
+            motorTics = left_drive1.getCurrentPosition() + ((distIN * 23)* posNeg);
+            while ((left_drive1.getCurrentPosition() < motorTics) && opModeIsActive()) {
+                telemetry.addData("pos:", left_drive1.getCurrentPosition());
+                telemetry.update();
+            }
         }else {
+            motorTics = right_drive1.getCurrentPosition() + ((distIN * 23)* posNeg);
             while ((right_drive1.getCurrentPosition() < motorTics) && opModeIsActive())
             {
                 telemetry.addData("pos:", left_drive1.getCurrentPosition());
@@ -163,44 +172,38 @@ public class AutoJava extends LinearOpMode {
 
     }
 
-    private void clawBot()
-    {
+    private void clawBot() {
         // other claw function didn't work cause you would always need to call it to be closed
         clawClosed = !clawClosed;
-        if (clawClosed)
-        {
-            claw1.setPosition(1);
-            claw2.setPosition(-1);
-        } else
-        {
-            claw1.setPosition(0);
-            claw2.setPosition(0);
-        }
+        if (clawClosed) {
+            claw1.setPosition(0.15);
+            claw2.setPosition(0.75);
+        } else {
+            claw1.setPosition(0.04);
+            claw2.setPosition(0.85);
 
+        }
     }
 
 
-
-    private void liftFreight(int level) {
-        int liftPos = 10;
-        if(lift.getCurrentPosition() < 20)
-        {
+    private void liftCone(int level) {
+        int liftPos = 0;
             switch (level)
             {
-
                 case 0: {
-                    liftPos = 1500;
+                    liftPos = 500;
+                    break;
                 }
                 case 1: {
-                    liftPos = 2500;
+                    liftPos = 1500;
+                    break;
                 }
                 case 2: {
-                    liftPos = 3040;
+                    liftPos = 2800;
+                    break;
                 }
-
-            }
         }
-        lift.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setTargetPosition(liftPos);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setPower(0.5);
