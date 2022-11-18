@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.slf4j.event.Level;
 
 import java.util.ArrayList;
 
@@ -32,7 +33,6 @@ public class AutoJava extends LinearOpMode {
     String webcamName = "Webcam 1";
 
 
-    int move;
     double powerFactor = 0;
     double speed = 105;
     boolean startMovement = false;
@@ -53,9 +53,10 @@ public class AutoJava extends LinearOpMode {
         right_drive2.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        clawBot();
         // stop and reset encoder goes in init motors don't change
         // claw things here
-        powerFactor = 0.5;
+        powerFactor = 1;
     }
 
 
@@ -100,7 +101,9 @@ public class AutoJava extends LinearOpMode {
         while (opModeIsActive())
         {
                 if(!stop) {
+
                     moveBot(30, 1, 0, 0);
+                    //moveBot(13, 0, 0, -1);
                     switch (pos) {
                         case LEFT: {
                             moveBot(24, 0, 0, -1);
@@ -127,17 +130,30 @@ public class AutoJava extends LinearOpMode {
     {
 
         // 23 motor tics = 1 IN
-        int motorTics = left_drive1.getCurrentPosition() + (distIN * 23);
-
+        int motorTics;
+        if(horizontal >= 0) {
+            motorTics = left_drive1.getCurrentPosition() + (distIN * 23);
+        }else
+        {
+            motorTics = right_drive1.getCurrentPosition() + (distIN * 23);
+        }
 
         right_drive1.setPower(powerFactor * (-pivot + (vertical - horizontal)));
         right_drive2.setPower(powerFactor * (-pivot + vertical + horizontal));
         left_drive1.setPower(powerFactor * (pivot + vertical + horizontal));
         left_drive2.setPower(powerFactor * (pivot + (vertical - horizontal)));
-        while ((left_drive1.getCurrentPosition() < motorTics) && opModeIsActive())
-        {
-            telemetry.addData("pos:", left_drive1.getCurrentPosition());
-            telemetry.update();
+        if(horizontal >= 0) {
+           while ((left_drive1.getCurrentPosition() < motorTics) && opModeIsActive())
+           {
+               telemetry.addData("pos:", left_drive1.getCurrentPosition());
+               telemetry.update();
+           }
+        }else {
+            while ((right_drive1.getCurrentPosition() < motorTics) && opModeIsActive())
+            {
+                telemetry.addData("pos:", left_drive1.getCurrentPosition());
+                telemetry.update();
+            }
         }
         right_drive1.setPower(0);
         right_drive2.setPower(0);
@@ -163,9 +179,35 @@ public class AutoJava extends LinearOpMode {
 
     }
 
-    private void liftBot()
-    {
 
+
+    private void liftFreight(int level) {
+        int liftPos = 10;
+        if(lift.getCurrentPosition() < 20)
+        {
+            switch (level)
+            {
+
+                case 0: {
+                    liftPos = 1500;
+                }
+                case 1: {
+                    liftPos = 2500;
+                }
+                case 2: {
+                    liftPos = 3040;
+                }
+
+            }
+        }
+        lift.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift.setTargetPosition(liftPos);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift.setPower(0.5);
+        while (lift.isBusy()) {
+            idle();
+        }
+        lift.setPower(0);
     }
 
 
