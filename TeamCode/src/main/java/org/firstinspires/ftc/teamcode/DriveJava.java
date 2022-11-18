@@ -46,9 +46,12 @@ public class DriveJava extends LinearOpMode {
         if (opModeIsActive()) {
             // Put run blocks here.
             while (opModeIsActive()) {
+                telemetry.addData("claw 1: ", claw1.getPosition());
+                telemetry.addData("claw 2: ", claw2.getPosition());
+                telemetry.update();
                 lift.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.5);
                 clawBot(gamepad2.right_bumper, gamepad2.left_bumper);
-                moveBot(0, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.left_stick_y);
+                moveBot( -gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
                 // Put loop blocks here.
                 telemetry.update();
             }
@@ -58,13 +61,12 @@ public class DriveJava extends LinearOpMode {
     /**
      * Describe this function...
      */
-    private void moveBot(int timeMili, float vertical, float pivot, float horizontal) {
+    private void moveBot( float vertical, float pivot, float horizontal) {
 
         right_drive1.setPower(powerFactor * (-pivot + (vertical - horizontal)));
         right_drive2.setPower(powerFactor * (-pivot + vertical + horizontal));
         left_drive1.setPower(powerFactor * (pivot + vertical + horizontal));
         left_drive2.setPower(powerFactor * (pivot + (vertical - horizontal)));
-        sleep(timeMili);
         right_drive1.setPower(0);
         right_drive2.setPower(0);
         left_drive1.setPower(0);
@@ -75,13 +77,14 @@ public class DriveJava extends LinearOpMode {
     {
         if(right_bumper)
         {
-            claw1.setPosition(1);
-            claw2.setPosition(-1);
+
+            claw1.setPosition(0.35);
+            claw2.setPosition(0.35);
         }
         else if (left_bumper)
         {
-            claw1.setPosition(0);
-            claw2.setPosition(0);
+            claw1.setPosition(0.05);
+            claw2.setPosition(0.75);
         }
     }
 }
