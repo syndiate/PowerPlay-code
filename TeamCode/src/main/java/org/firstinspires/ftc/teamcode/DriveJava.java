@@ -95,19 +95,23 @@ public class DriveJava extends LinearOpMode {
         {
             speedChangeValue--;
         }
-        telemetry.addData("speed change", speedChangeValue);
-        telemetry.update();
         switch (speedChangeValue)
         {
             case 0:
                 powerFactor = 0.2 ;
+                break;
             case 1:
                 powerFactor = 0.4;
+                break;
             case 2:
                 powerFactor = 0.6;
+                break;
             case 3:
                 powerFactor = 0.8;
+                break;
         }
+        telemetry.addData("speed change", powerFactor);
+        telemetry.update();
 
     }
     private void moveBot( float vertical, float pivot, float horizontal) {
@@ -133,7 +137,7 @@ public class DriveJava extends LinearOpMode {
         else if (left_bumper)
         {
             claw1.setPosition(0.04);
-            claw2.setPosition(0.85);
+            claw2.setPosition(0.8);
         }
     }
 }
