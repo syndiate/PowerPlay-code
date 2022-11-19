@@ -1,0 +1,68 @@
+
+    void clawTest() {
+        for (double i = 0.45; i < 1; i += 0.05) {
+            claw2.setPosition(i);
+            telemetry.addData("pos: ", i);
+            telemetry.update();
+            sleep(1500);
+        }
+    }
+
+    // only works in autojava
+    void liftTest() {
+        liftCone(0);
+        telemetry.addLine("o");
+        telemetry.update();
+        sleep(1000);
+        liftCone(1);
+        telemetry.addLine("1");
+        telemetry.update();
+        sleep(1000);
+        liftCone(2);
+        telemetry.addLine("2");
+        telemetry.update();
+        sleep(1000);
+    }
+
+    void wheelTest() {
+        telemetry.addLine("testing left drive 1 forward");
+        telemetry.update();
+        left_drive1.setPower(0.25);
+        sleep(2000);
+        left_drive1.setPower(0);
+        telemetry.addLine("testing left drive 1 reverse");
+        telemetry.update();
+        left_drive1.setPower(-0.25);
+        sleep(2000);
+        left_drive1.setPower(0);
+        telemetry.addLine("testing left drive 2 forward");
+        telemetry.update();
+        left_drive2.setPower(0.25);
+        sleep(2000);
+        left_drive2.setPower(0);
+        telemetry.addLine("testing left drive 2 reverse");
+        telemetry.update();
+        left_drive2.setPower(-0.25);
+        sleep(2000);
+        left_drive2.setPower(0);
+        telemetry.addLine("testing right drive 1 forward");
+        telemetry.update();
+        right_drive1.setPower(0.25);
+        sleep(2000);
+        right_drive1.setPower(0);
+        telemetry.addLine("testing right drive 1 reverse");
+        telemetry.update();
+        right_drive1.setPower(-0.25);
+        sleep(2000);
+        right_drive1.setPower(0);
+        telemetry.addLine("testing right drive 2 forward");
+        telemetry.update();
+        right_drive2.setPower(0.25);
+        sleep(2000);
+        right_drive2.setPower(0);
+        telemetry.addLine("testing right drive 2 reverse");
+        telemetry.update();
+        right_drive2.setPower(-0.25);
+        sleep(2000);
+        right_drive2.setPower(0);
+    }
