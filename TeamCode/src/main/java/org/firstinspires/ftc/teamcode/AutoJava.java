@@ -12,9 +12,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.slf4j.event.Level;
-
-import java.util.ArrayList;
 
 @Autonomous(name = "AutoJava", group = "Auto")
 public class AutoJava extends LinearOpMode {
@@ -25,7 +22,6 @@ public class AutoJava extends LinearOpMode {
     private DcMotor lift;
     private Servo claw1;
     private Servo claw2;
-    private ArrayList<String> movements = new ArrayList<>();
     private volatile SleeveDetection.ParkingPosition pos;
     
     SleeveDetection sleeveDetection;
@@ -33,7 +29,7 @@ public class AutoJava extends LinearOpMode {
     String webcamName = "Webcam 1";
 
 
-    double powerFactor = 1;
+    double powerFactor = 0.5;
     double startingPF = 0;
     boolean startPressed = false;
     boolean clawClosed = false;
@@ -55,7 +51,7 @@ public class AutoJava extends LinearOpMode {
         clawBot();
         // stop and reset encoder goes in init motors don't change
         // claw things here
-        powerFactor = 1;
+        powerFactor = 0.5;
         startingPF = powerFactor;
     }
 
@@ -101,29 +97,14 @@ public class AutoJava extends LinearOpMode {
         while (opModeIsActive())
         {
                 if(!stop) {
-                    clawBot();
-                    liftCone(0);
                     moveBot(25, 1, 0, 0);
-                    moveBot(14, 0, 0, -1);
-                    liftCone(2);
-                    powerFactor = 0.25;
-                    moveBot(2, 1, 0, 0);
-                    sleep(1500);
-                    clawBot();
-                    moveBot(2, -1, 0, 0);
-                    liftCone(-1);
-                    powerFactor = startingPF;
                     switch (pos) {
                         case LEFT: {
-                            moveBot(11, 0, 0, -1);
+                            moveBot(24, 0, 0, -1);
                             break;
                         }
-                        case CENTER:
-                        {
-                            moveBot(13, 0, 0, 1);
-                        }
                         case RIGHT: {
-                            moveBot(37, 0, 0, 1);
+                            moveBot(24, 0, 0, 1);
                             break;
                         }
                     }
@@ -180,7 +161,7 @@ public class AutoJava extends LinearOpMode {
             claw2.setPosition(0.75);
         } else {
             claw1.setPosition(0.04);
-            claw2.setPosition(0.85);
+            claw2.setPosition(0.8);
 
         }
     }
