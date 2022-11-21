@@ -76,7 +76,10 @@ public class AutoJavaConeFlipped extends LinearOpMode {
             }
 
             @Override
-            public void onError(int errorCode) {}
+            public void onError(int errorCode) {
+                telemetry.addData("Camera error code:", errorCode);
+                telemetry.update();
+            }
         });
 
         while (!isStarted()) {
@@ -112,6 +115,8 @@ public class AutoJavaConeFlipped extends LinearOpMode {
                 liftCone(2);
                 moveBot(1, 1, 0, 0);
                 sleep(1000);
+                liftCone(1);
+                sleep(500);
                 clawBot();
                 moveBot(2, -1, 0, 0);
                 liftCone(-1);

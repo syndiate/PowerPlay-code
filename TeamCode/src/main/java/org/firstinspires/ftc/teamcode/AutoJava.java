@@ -12,6 +12,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.slf4j.event.Level;
+
+import java.util.ArrayList;
 
 @Autonomous(name = "AutoJava", group = "Auto")
 public class AutoJava extends LinearOpMode {
@@ -22,6 +25,7 @@ public class AutoJava extends LinearOpMode {
     private DcMotor lift;
     private Servo claw1;
     private Servo claw2;
+    private ArrayList<String> movements = new ArrayList<>();
     private volatile SleeveDetection.ParkingPosition pos;
     
     SleeveDetection sleeveDetection;
@@ -29,7 +33,7 @@ public class AutoJava extends LinearOpMode {
     String webcamName = "Webcam 1";
 
 
-    double powerFactor = 0.5;
+    double powerFactor = 1;
     double startingPF = 0;
     boolean startPressed = false;
     boolean clawClosed = false;
@@ -51,7 +55,7 @@ public class AutoJava extends LinearOpMode {
         clawBot();
         // stop and reset encoder goes in init motors don't change
         // claw things here
-        powerFactor = 0.5;
+        powerFactor = 1;
         startingPF = powerFactor;
     }
 
@@ -74,7 +78,10 @@ public class AutoJava extends LinearOpMode {
             }
 
             @Override
-            public void onError(int errorCode) {}
+            public void onError(int errorCode) {
+                telemetry.addData("Camera error code:", errorCode);
+                telemetry.update();
+            }
         });
 
         while (!isStarted()) {
@@ -96,24 +103,38 @@ public class AutoJava extends LinearOpMode {
         camera.closeCameraDevice();
         while (opModeIsActive())
         {
-                if(!stop) {
-                    moveBot(25, 1, 0, 0);
-                    switch (pos) {
-                        case LEFT: {
-                            moveBot(24, 0, 0, -1);
-                            break;
-                        }
-                        case RIGHT: {
-                            moveBot(24, 0, 0, 1);
-                            break;
-                        }
+            if(!stop) {
+                clawBot();
+                liftCone(0);
+                moveBot(25, 1, 0, 0);
+                moveBot(14, 0, 0, -1);
+                liftCone(2);
+                powerFactor = 0.25;
+                moveBot(2, 1, 0, 0);
+                sleep(1500);
+                liftCone(1);
+                sleep(1000);
+                clawBot();
+                moveBot(2, -1, 0, 0);
+                liftCone(-1);
+                powerFactor = startingPF;
+                switch (pos) {
+                    case LEFT: {
+                        moveBot(11, 0, 0, -1);
+                        break;
                     }
-
-                    stop = true;
-
-
-                    //autonomous code here
+                    case CENTER: {
+                            moveBot(13, 0, 0, 1);
+                    }
+                    case RIGHT: {
+                        moveBot(37, 0, 0, 1);
+                        break;
+                    }
                 }
+
+                stop = true;
+
+            }
 
         }
 
@@ -131,13 +152,14 @@ public class AutoJava extends LinearOpMode {
         right_drive2.setPower(powerFactor * (-pivot + vertical + horizontal));
         left_drive1.setPower(powerFactor * (pivot + vertical + horizontal));
         left_drive2.setPower(powerFactor * (pivot + (vertical - horizontal)));
-        if(horizontal >= 0) {
+        if (horizontal >= 0) {
             motorTics = left_drive1.getCurrentPosition() + ((distIN * 23)* posNeg);
-            while ((left_drive1.getCurrentPosition() < motorTics) && opModeIsActive()) {
+            while ((left_drive1.getCurrentPosition() < motorTics) && opModeIsActive())
+            {
                 telemetry.addData("pos:", left_drive1.getCurrentPosition());
                 telemetry.update();
             }
-        }else {
+        } else {
             motorTics = right_drive1.getCurrentPosition() + ((distIN * 23)* posNeg);
             while ((right_drive1.getCurrentPosition() < motorTics) && opModeIsActive())
             {
@@ -156,33 +178,33 @@ public class AutoJava extends LinearOpMode {
     private void clawBot() {
         // other claw function didn't work cause you would always need to call it to be closed
         clawClosed = !clawClosed;
+
         if (clawClosed) {
             claw1.setPosition(0.15);
             claw2.setPosition(0.75);
         } else {
             claw1.setPosition(0.04);
-            claw2.setPosition(0.8);
-
+            claw2.setPosition(0.85);
         }
     }
 
 
     private void liftCone(int level) {
         int liftPos = 0;
-            switch (level)
-            {
-                case 0: {
-                    liftPos = 500;
-                    break;
-                }
-                case 1: {
-                    liftPos = 1500;
-                    break;
-                }
-                case 2: {
-                    liftPos = 2800;
-                    break;
-                }
+        switch (level)
+        {
+            case 0: {
+                liftPos = 500;
+                break;
+            }
+            case 1: {
+                liftPos = 1500;
+                break;
+            }
+            case 2: {
+                liftPos = 2800;
+                break;
+            }
         }
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setTargetPosition(liftPos);
