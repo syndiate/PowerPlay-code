@@ -19,6 +19,7 @@ public class DriveJava extends LinearOpMode {
     int speedChangeValue = 1;
     boolean speedChangedUp = false;
     boolean speedChangedDown = false;
+
     private void initMotors() {
         right_drive1 = hardwareMap.get(DcMotor.class, "right_drive1");
         right_drive2 = hardwareMap.get(DcMotor.class, "right_drive2");
@@ -56,7 +57,7 @@ public class DriveJava extends LinearOpMode {
                 callSpeedChange();
                 lift.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.5);
                 clawBot(gamepad2.right_bumper, gamepad2.left_bumper);
-                moveBot( -gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
+                moveBot(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
                 // Put loop blocks here.
             }
         }
@@ -71,34 +72,38 @@ public class DriveJava extends LinearOpMode {
         {
             speedChangedUp = true;
             speedChange(true);
-        }else if (this.gamepad1.right_trigger <= 0 && speedChangedUp)
+        }
+        else if (this.gamepad1.right_trigger <= 0 && speedChangedUp)
         {
             speedChangedUp = false;
         }
-        if(this.gamepad1.left_trigger > 0 && !speedChangedDown)
+        if (this.gamepad1.left_trigger > 0 && !speedChangedDown)
         {
             speedChangedDown = true;
             speedChange(false);
-        }else if (this.gamepad1.left_trigger <= 0 && speedChangedDown)
+        }
+        else if (this.gamepad1.left_trigger <= 0 && speedChangedDown)
         {
             speedChangedDown = false;
         }
     }
+
     void speedChange(boolean faster)
     {
 
-        if(faster && speedChangeValue < 2)
+        if (faster && speedChangeValue < 2)
         {
             speedChangeValue++;
         }
-        if(!faster && speedChangeValue > 0)
+        if (!faster && speedChangeValue > 0)
         {
             speedChangeValue--;
         }
+
         switch (speedChangeValue)
         {
             case 0:
-                powerFactor = 0.2 ;
+                powerFactor = 0.2;
                 break;
             case 1:
                 powerFactor = 0.4;
@@ -110,11 +115,12 @@ public class DriveJava extends LinearOpMode {
                 powerFactor = 0.8;
                 break;
         }
+
         telemetry.addData("speed change", powerFactor);
         telemetry.update();
 
     }
-    private void moveBot( float vertical, float pivot, float horizontal) {
+    private void moveBot(float vertical, float pivot, float horizontal) {
 
         right_drive1.setPower(powerFactor * (-pivot + (vertical - horizontal)));
         right_drive2.setPower(powerFactor * (-pivot + vertical + horizontal));
@@ -128,9 +134,8 @@ public class DriveJava extends LinearOpMode {
 
     private void clawBot(boolean right_bumper, boolean left_bumper)
     {
-        if(right_bumper)
+        if (right_bumper)
         {
-
             claw1.setPosition(0.15);
             claw2.setPosition(0.75);
         }

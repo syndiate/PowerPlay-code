@@ -76,7 +76,10 @@ public class AutoJavaCone extends LinearOpMode {
             }
 
             @Override
-            public void onError(int errorCode) {}
+            public void onError(int errorCode) {
+                telemetry.addData("Camera error code:", errorCode);
+                telemetry.update();
+            }
         });
 
         while (!isStarted()) {
@@ -98,41 +101,39 @@ public class AutoJavaCone extends LinearOpMode {
         camera.closeCameraDevice();
         while (opModeIsActive())
         {
-                if(!stop) {
-                    clawBot();
-                    liftCone(1);
-                    moveBot(26, 1, 0, 0);
-                    moveBot(13, 0, 0, -1);
-                    liftCone(2);
-                    powerFactor = 0.25;
-                    moveBot(2.25f, 1, 0, 0);
-                    sleep(1000);
-                    clawBot();
-                    moveBot(3, -1, 0, 0);
-                    liftCone(-1);
-                    powerFactor = startingPF;
-                    switch (pos) {
-                        case LEFT: {
-                            moveBot(1, 1, 0, 0);
-                            moveBot(11, 0, 0, -1);
-                            break;
-                        }
-                        case CENTER:
-                        {
-                            moveBot(13, 0, 0, 1);
-                            break;
-                        }
-                        case RIGHT: {
-                            moveBot(43, 0, 0, 1);
-                            break;
-                        }
+            if(!stop) {
+                clawBot();
+                liftCone(1);
+                moveBot(26, 1, 0, 0);
+                moveBot(13, 0, 0, -1);
+                liftCone(2);
+                powerFactor = 0.25;
+                moveBot(2.25f, 1, 0, 0);
+                sleep(1000);
+                liftCone(1);
+                sleep(500);
+                clawBot();
+                moveBot(3, -1, 0, 0);
+                liftCone(-1);
+                powerFactor = startingPF;
+                switch (pos) {
+                    case LEFT: {
+                        moveBot(1, 1, 0, 0);
+                        moveBot(11, 0, 0, -1);
+                        break;
                     }
-
-                    stop = true;
-
-
-                    //autonomous code here
+                    case CENTER: {
+                        moveBot(13, 0, 0, 1);
+                        break;
+                    }
+                    case RIGHT: {
+                        moveBot(43, 0, 0, 1);
+                        break;
+                    }
                 }
+
+                stop = true;
+            }
 
         }
 
@@ -150,7 +151,7 @@ public class AutoJavaCone extends LinearOpMode {
         right_drive2.setPower(powerFactor * (-pivot + vertical + horizontal));
         left_drive1.setPower(powerFactor * (pivot + vertical + horizontal));
         left_drive2.setPower(powerFactor * (pivot + (vertical - horizontal)));
-        if(horizontal >= 0) {
+        if (horizontal >= 0) {
             motorTics = left_drive1.getCurrentPosition() + (int)((distIN * 23)* posNeg);
             if(posNeg == -1)
             {
@@ -158,13 +159,15 @@ public class AutoJavaCone extends LinearOpMode {
                     telemetry.addData("pos:", left_drive1.getCurrentPosition());
                     telemetry.update();
                 }
-            }else {
+            }
+            else
+            {
                 while ((left_drive1.getCurrentPosition() < motorTics) && opModeIsActive()) {
                     telemetry.addData("pos:", left_drive1.getCurrentPosition());
                     telemetry.update();
                 }
             }
-        }else {
+        } else {
             motorTics = right_drive1.getCurrentPosition() + (int)((distIN * 23)* posNeg);
             while ((right_drive1.getCurrentPosition() < motorTics) && opModeIsActive())
             {
@@ -183,33 +186,34 @@ public class AutoJavaCone extends LinearOpMode {
     private void clawBot() {
         // other claw function didn't work cause you would always need to call it to be closed
         clawClosed = !clawClosed;
+
         if (clawClosed) {
             claw1.setPosition(0.15);
             claw2.setPosition(0.75);
         } else {
             claw1.setPosition(0.04);
             claw2.setPosition(0.8);
-
         }
+
     }
 
 
     private void liftCone(int level) {
         int liftPos = 0;
-            switch (level)
-            {
-                case 0: {
-                    liftPos = 800;
-                    break;
-                }
-                case 1: {
-                    liftPos = 1500;
-                    break;
-                }
-                case 2: {
-                    liftPos = 2650;
-                    break;
-                }
+        switch (level)
+        {
+            case 0: {
+                liftPos = 800;
+                break;
+            }
+            case 1: {
+                liftPos = 1500;
+                break;
+            }
+            case 2: {
+                liftPos = 2650;
+                break;
+            }
         }
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setTargetPosition(liftPos);
