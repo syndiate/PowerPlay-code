@@ -27,7 +27,7 @@ public class AutoJava extends LinearOpMode {
     private Servo claw2;
     private ArrayList<String> movements = new ArrayList<>();
     private volatile SleeveDetection.ParkingPosition pos;
-    
+
     SleeveDetection sleeveDetection;
     OpenCvCamera camera;
     String webcamName = "Webcam 1";
@@ -103,7 +103,7 @@ public class AutoJava extends LinearOpMode {
         camera.closeCameraDevice();
         while (opModeIsActive())
         {
-            if(!stop) {
+            if (!stop) {
                 clawBot();
                 liftCone(0);
                 moveBot(25, 1, 0, 0);
