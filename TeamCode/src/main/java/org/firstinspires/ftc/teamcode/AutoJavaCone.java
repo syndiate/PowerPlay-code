@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -13,19 +13,19 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-;
-
 @Autonomous(name = "AutoJavaCone", group = "Auto")
+@Disabled
 public class AutoJavaCone extends LinearOpMode {
-    private DcMotorEx right_drive1;
-    private DcMotorEx right_drive2;
-    private DcMotorEx left_drive1;
-    private DcMotorEx left_drive2;
-    private DcMotor lift;
-    private Servo claw1;
-    private Servo claw2;
-    private volatile SleeveDetection.ParkingPosition pos;
-    
+
+    public DcMotorEx right_drive1;
+    public DcMotorEx right_drive2;
+    public DcMotorEx left_drive1;
+    public DcMotorEx left_drive2;
+    public DcMotor lift;
+    public Servo claw1;
+    public Servo claw2;
+    public volatile SleeveDetection.ParkingPosition pos;
+
     SleeveDetection sleeveDetection;
     OpenCvCamera camera;
     String webcamName = "Webcam 1";
@@ -35,9 +35,9 @@ public class AutoJavaCone extends LinearOpMode {
     double startingPF = 0;
     boolean startPressed = false;
     boolean clawClosed = false;
-    //we may need some additional variables here ^^
 
-    private void initMotors() {
+
+    public void initMotors() {
         right_drive1 = hardwareMap.get(DcMotorEx.class, "right_drive1");
         right_drive2 = hardwareMap.get(DcMotorEx.class, "right_drive2");
         left_drive1 = hardwareMap.get(DcMotorEx.class, "left_drive1");
@@ -58,10 +58,8 @@ public class AutoJavaCone extends LinearOpMode {
     }
 
 
-    @Override
-    public void runOpMode()
-    {
-        initMotors();
+
+    public void initCamera() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
         sleeveDetection = new SleeveDetection();
@@ -81,67 +79,11 @@ public class AutoJavaCone extends LinearOpMode {
                 telemetry.update();
             }
         });
-
-        while (!isStarted()) {
-
-            telemetry.addData("YCM: ", sleeveDetection.getYelPercent() + " " +
-                    sleeveDetection.getCyaPercent() + " " + sleeveDetection.getMagPercent());
-            telemetry.addData("ROTATION1: ", sleeveDetection.getPosition());
-            telemetry.update();
-            pos = sleeveDetection.getPosition();
-        }
-
-
-        telemetry.addLine("Waiting for start");
-        telemetry.update();
-        waitForStart();
-
-        startPressed = true;
-        boolean stop = false;
-        camera.closeCameraDevice();
-        while (opModeIsActive())
-        {
-            if(!stop) {
-                clawBot();
-                liftCone(1);
-                moveBot(26, 1, 0, 0);
-                moveBot(13, 0, 0, -1);
-                liftCone(2);
-                powerFactor = 0.25;
-                moveBot(2.25f, 1, 0, 0);
-                sleep(1000);
-                liftCone(1);
-                sleep(500);
-                clawBot();
-                moveBot(3, -1, 0, 0);
-                liftCone(-1);
-                powerFactor = startingPF;
-                switch (pos) {
-                    case LEFT: {
-                        moveBot(1, 1, 0, 0);
-                        moveBot(11, 0, 0, -1);
-                        break;
-                    }
-                    case CENTER: {
-                        moveBot(13, 0, 0, 1);
-                        break;
-                    }
-                    case RIGHT: {
-                        moveBot(43, 0, 0, 1);
-                        break;
-                    }
-                }
-
-                stop = true;
-            }
-
-        }
-
-
     }
 
 
-    private void moveBot(float distIN, float vertical, float pivot, float horizontal)
+
+    public void moveBot(float distIN, float vertical, float pivot, float horizontal)
     {
 
         // 23 motor tics = 1 IN
@@ -153,15 +95,13 @@ public class AutoJavaCone extends LinearOpMode {
         left_drive2.setPower(powerFactor * (pivot + (vertical - horizontal)));
         if (horizontal >= 0) {
             motorTics = left_drive1.getCurrentPosition() + (int)((distIN * 23)* posNeg);
-            if(posNeg == -1)
+            if (posNeg == -1)
             {
                 while ((left_drive1.getCurrentPosition() > motorTics) && opModeIsActive()) {
                     telemetry.addData("pos:", left_drive1.getCurrentPosition());
                     telemetry.update();
                 }
-            }
-            else
-            {
+            } else {
                 while ((left_drive1.getCurrentPosition() < motorTics) && opModeIsActive()) {
                     telemetry.addData("pos:", left_drive1.getCurrentPosition());
                     telemetry.update();
@@ -183,22 +123,24 @@ public class AutoJavaCone extends LinearOpMode {
 
     }
 
-    private void clawBot() {
+
+
+    public void clawBot() {
         // other claw function didn't work cause you would always need to call it to be closed
         clawClosed = !clawClosed;
-
         if (clawClosed) {
             claw1.setPosition(0.15);
             claw2.setPosition(0.75);
         } else {
             claw1.setPosition(0.04);
             claw2.setPosition(0.8);
-        }
 
+        }
     }
 
 
-    private void liftCone(int level) {
+
+    public void liftCone(int level) {
         int liftPos = 0;
         switch (level)
         {
@@ -222,8 +164,12 @@ public class AutoJavaCone extends LinearOpMode {
         while (lift.isBusy()) {
             idle();
         }
-        lift.setPower(0.15);
+        lift.setPower(0);
     }
 
+
+    public void runOpMode() {
+
+    }
 
 }

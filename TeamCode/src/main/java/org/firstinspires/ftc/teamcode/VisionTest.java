@@ -33,11 +33,15 @@ public class VisionTest extends LinearOpMode {
             }
 
             @Override
-            public void onError(int errorCode) {}
+            public void onError(int errorCode) {
+                telemetry.addData("Camera error code:", errorCode);
+                telemetry.update();
+            }
         });
 
         while (!isStarted()) {
-            telemetry.addData("YCM: ", sleeveDetection.getRedPercent() + " " + sleeveDetection.getBluePercent());
+            telemetry.addData("YCM: ", sleeveDetection.getYelPercent() + " " +
+                    sleeveDetection.getCyaPercent() + " " + sleeveDetection.getMagPercent());
             telemetry.addData("ROTATION1: ", sleeveDetection.getPosition());
             telemetry.update();
         }
