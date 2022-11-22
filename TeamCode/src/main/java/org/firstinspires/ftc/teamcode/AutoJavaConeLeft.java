@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "AutoJavaConeRed", group = "Auto")
-public class AutoJavaConeRed extends AutoJavaCone {
+@Autonomous(name = "AutoJavaConeBlue", group = "Auto")
+public class AutoJavaConeBlue extends AutoJavaCone {
 
     @Override
     public void runOpMode()
@@ -33,34 +33,29 @@ public class AutoJavaConeRed extends AutoJavaCone {
             if (!stop) {
                 clawBot();
                 liftCone(1);
-                moveBot(12, 1, 0, 0);
-                liftCone(1);
-                moveBot(9, 1, 0, 0);
-                liftCone(1);
+                moveBot(26, 1, 0, 0);
                 moveBot(13, 0, 0, 1);
                 liftCone(2);
                 powerFactor = 0.25;
-                moveBot(1, 1, 0, 0);
-                liftCone(2);
-                moveBot(1, 1, 0, 0);
+                moveBot(2.25f, 1, 0, 0);
                 sleep(1000);
                 liftCone(1);
                 sleep(500);
                 clawBot();
-                moveBot(2, -1, 0, 0);
+                moveBot(3, -1, 0, 0);
                 liftCone(-1);
                 powerFactor = startingPF;
                 switch (pos) {
-                    case LEFT: {
+                    case RIGHT: {
+                        moveBot(1, 1, 0, 0);
                         moveBot(11, 0, 0, -1);
                         break;
                     }
-                    case CENTER:
-                    {
-                        moveBot(13, 0, 0, 1);
+                    case CENTER: {
+                        moveBot(13, 0, 0, -1);
                         break;
                     }
-                    case RIGHT: {
+                    case LEFT: {
                         moveBot(43, 0, 0, 1);
                         break;
                     }
