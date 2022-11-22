@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "AutoJavaConeBlue", group = "Auto")
-public class AutoJavaConeBlue extends AutoJavaCone {
+@Autonomous(name = "AutoJavaConeRight", group = "Auto")
+public class AutoJavaConeRight extends AutoJavaCone {
 
     @Override
     public void runOpMode()
