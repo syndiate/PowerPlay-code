@@ -85,7 +85,7 @@ public class AutoJavaCone extends LinearOpMode {
     }
 
 
-    private void moveBot(double x, double y)
+    public void moveBot(double x, double y)
     {
 
         // 23 motor tics = 1 IN
