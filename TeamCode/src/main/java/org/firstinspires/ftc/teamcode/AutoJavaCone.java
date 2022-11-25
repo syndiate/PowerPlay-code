@@ -85,7 +85,7 @@ public class AutoJavaCone extends LinearOpMode {
     }
 
 
-    private void moveBot(double x, double y, boolean straight)
+    void moveBot(double x, double y, boolean straight)
     {
     if(straight)
     {
