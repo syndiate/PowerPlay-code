@@ -115,8 +115,8 @@ public class AutoJavaCone extends LinearOpMode {
             }
         }
         position.set(1, position.get(1) + ((left_drive1.getCurrentPosition() - preY)/23));
-        double xDif = (left_drive1.getCurrentPosition() > position.get(1)) ? (left_drive1.getCurrentPosition()/23) - position.get(0) : position.get(0) - (left_drive1.getCurrentPosition()/23);
-        posNeg = (left_drive1.getCurrentPosition() > position.get(1)) ? 1 : -1;
+       double xDif = (left_drive1.getCurrentPosition() > position.get(0)) ? (left_drive1.getCurrentPosition() / 23) - position.get(0) : position.get(0) - (left_drive1.getCurrentPosition() / 23);
+        posNeg = (left_drive1.getCurrentPosition() > position.get(0)) ? 1 : -1;
         double preX = left_drive1.getCurrentPosition();
         right_drive1.setPower(powerFactor * (-posNeg));
         right_drive2.setPower(powerFactor * (posNeg));
