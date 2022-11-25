@@ -85,33 +85,77 @@ public class AutoJavaCone extends LinearOpMode {
     }
 
 
-    public void moveBot(double x, double y)
+    void moveBot(double x, double y, boolean straight)
     {
-
+    if(straight)
+    {
+        double yDif = ((left_drive1.getCurrentPosition() / 23) > position.get(1)) ? (left_drive1.getCurrentPosition() / 23) - position.get(1) : position.get(1) - (left_drive1.getCurrentPosition() / 23);
+        double xDif = ((left_drive1.getCurrentPosition() / 23) > position.get(0)) ? (left_drive1.getCurrentPosition() / 23) - position.get(0) : position.get(0) - (left_drive1.getCurrentPosition() / 23);
+        double preY = left_drive1.getCurrentPosition();
+        double preX = left_drive1.getCurrentPosition();
+        double percent = Math.atan(xDif/ yDif);
+        double vertical   = ((left_drive1.getCurrentPosition() / 23) > position.get(1)) ? 1 : -1;
+        double horizontal = ((left_drive1.getCurrentPosition() / 23) > position.get(0)) ? 1 : -1;
+        vertical *= Math.abs(percent);
+        horizontal *= Math.abs(90 - percent);
+        double distIN = Math.sqrt(((yDif*yDif)+(xDif*xDif)));
+        int motorTics;
+        int posNeg = (vertical >= 0) ? 1 : -1;
+        right_drive1.setPower(powerFactor * ((vertical - horizontal)));
+        right_drive2.setPower(powerFactor * (vertical + horizontal));
+        left_drive1.setPower(powerFactor * (vertical + horizontal));
+        left_drive2.setPower(powerFactor * ((vertical - horizontal)));
+        if (horizontal >= 0) {
+            motorTics = left_drive1.getCurrentPosition() + (int)((distIN * 23)* posNeg);
+            if (posNeg == -1) {
+                while ((left_drive1.getCurrentPosition() > motorTics) && opModeIsActive()) {
+                    telemetry.addData("pos:", left_drive1.getCurrentPosition());
+                    telemetry.update();
+                    position.set(1, position.get(1) + (((left_drive1.getCurrentPosition()) - preY) / 23));
+                }
+            } else {
+                while ((left_drive1.getCurrentPosition() < motorTics) && opModeIsActive()) {
+                    telemetry.addData("pos:", left_drive1.getCurrentPosition());
+                    telemetry.update();
+                    position.set(1, position.get(1) + ((left_drive1.getCurrentPosition() - preY) / 23));
+                }
+            }
+        } else {
+            motorTics = left_drive1.getCurrentPosition() + (int)((distIN * 23)* posNeg);
+            while ((left_drive1.getCurrentPosition() < motorTics) && opModeIsActive())
+            {
+                telemetry.addData("pos:", left_drive1.getCurrentPosition());
+                telemetry.update();
+                position.set(0, position.get(0) + ((left_drive1.getCurrentPosition() - preX) / 23));
+            }
+        }
+        right_drive1.setPower(0);
+        right_drive2.setPower(0);
+        left_drive1.setPower(0);
+        left_drive2.setPower(0);
+        telemetry.update();
+    }else {
         // 23 motor tics = 1 IN
         int motorTics;
-        double yDif = (left_drive1.getCurrentPosition() > position.get(1)) ? (left_drive1.getCurrentPosition()/23) - position.get(1) : position.get(1) - (left_drive1.getCurrentPosition()/23);
+        double yDif = ((left_drive1.getCurrentPosition() / 23) > position.get(1)) ? (left_drive1.getCurrentPosition() / 23) - position.get(1) : position.get(1) - (left_drive1.getCurrentPosition() / 23);
         double preY = left_drive1.getCurrentPosition();
-        int posNeg = (left_drive1.getCurrentPosition() > position.get(1)) ? 1 : -1;
+        int posNeg = ((left_drive1.getCurrentPosition() / 23) > position.get(1)) ? 1 : -1;
         right_drive1.setPower(powerFactor * (posNeg));
         right_drive2.setPower(powerFactor * (posNeg));
         left_drive1.setPower(powerFactor * (posNeg));
         left_drive2.setPower(powerFactor * (posNeg));
-        motorTics = left_drive1.getCurrentPosition() + (int)((yDif * 23)* posNeg);
-        if(posNeg == -1)
-        {
+        motorTics = left_drive1.getCurrentPosition() + (int) ((yDif * 23) * posNeg);
+        if (posNeg == -1) {
             while ((left_drive1.getCurrentPosition() > motorTics) && opModeIsActive()) {
                 telemetry.addData("pos:", left_drive1.getCurrentPosition());
                 telemetry.update();
-                position.set(1, position.get(1) + ((left_drive1.getCurrentPosition() - preY)/23));
+                position.set(1, position.get(1) + ((left_drive1.getCurrentPosition() - preY) / 23));
             }
-        }
-        else
-        {
+        } else {
             while ((left_drive1.getCurrentPosition() < motorTics) && opModeIsActive()) {
                 telemetry.addData("pos:", left_drive1.getCurrentPosition());
                 telemetry.update();
-                position.set(1, position.get(1) + ((left_drive1.getCurrentPosition() - preY)/23));
+                position.set(1, position.get(1) + ((left_drive1.getCurrentPosition() - preY) / 23));
             }
         }
         position.set(1, position.get(1) + ((left_drive1.getCurrentPosition() - preY) / 23));
@@ -122,24 +166,22 @@ public class AutoJavaCone extends LinearOpMode {
         right_drive2.setPower(powerFactor * (posNeg));
         left_drive1.setPower(powerFactor * (posNeg));
         left_drive2.setPower(powerFactor * (-posNeg));
-        motorTics = left_drive1.getCurrentPosition() + (int)((xDif * 23)* posNeg);
-        if(posNeg == -1)
-        {
+        motorTics = left_drive1.getCurrentPosition() + (int) ((xDif * 23) * posNeg);
+        if (posNeg == -1) {
             while ((left_drive1.getCurrentPosition() > motorTics) && opModeIsActive()) {
                 telemetry.addData("pos:", left_drive1.getCurrentPosition());
                 telemetry.update();
-                position.set(0, position.get(0) + ((left_drive1.getCurrentPosition() - preX)/23));
+                position.set(0, position.get(0) + ((left_drive1.getCurrentPosition() - preX) / 23));
             }
-        }
-        else
-        {
+        } else {
             while ((left_drive1.getCurrentPosition() < motorTics) && opModeIsActive()) {
                 telemetry.addData("pos:", left_drive1.getCurrentPosition());
                 telemetry.update();
-                position.set(0, position.get(0) + ((left_drive1.getCurrentPosition() - preX)/23));
+                position.set(0, position.get(0) + ((left_drive1.getCurrentPosition() - preX) / 23));
             }
         }
-        position.set(0, position.get(0) + ((left_drive1.getCurrentPosition() - preX)/23));
+        position.set(0, position.get(0) + ((left_drive1.getCurrentPosition() - preX) / 23));
+    }
 
     }
     public void moveBot(float distIN, float vertical, float pivot, float horizontal)
