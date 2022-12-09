@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+// IMPORTANT
+// for optimal performance, the robot should be 7 inches away from the leftmost edge of the adjacent small junction
+
 @Autonomous(name = "AutoJavaConeRight", group = "Auto")
 public class AutoJavaConeRight extends AutoJavaCone {
 
@@ -32,8 +35,8 @@ public class AutoJavaConeRight extends AutoJavaCone {
         {
             if (!stop) {
                 clawBot();
-                liftCone(1);
-                moveBot(26, 1, 0, 0);
+                //liftCone(1);
+                moveBot(26.5f, 1, 0, 0);
                 moveBot(13, 0, 0, -1);
                 liftCone(2);
                 powerFactor = 0.25;

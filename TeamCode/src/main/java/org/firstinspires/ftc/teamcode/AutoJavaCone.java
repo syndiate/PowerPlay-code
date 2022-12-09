@@ -90,7 +90,7 @@ public class AutoJavaCone extends LinearOpMode {
     }
 
 
-    public void moveBotAlt(double x, double y, boolean straight) {
+    public void moveBot(double x, double y, boolean straight) {
 
         double yDif = (y > position.get(1)) ? y - position.get(1) : position.get(1) - y;
         double preY = left_drive1.getCurrentPosition();

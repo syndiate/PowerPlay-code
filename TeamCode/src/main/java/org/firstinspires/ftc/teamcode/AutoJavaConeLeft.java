@@ -32,8 +32,8 @@ public class AutoJavaConeLeft extends AutoJavaCone {
         {
             if (!stop) {
                 clawBot();
-                liftCone(1);
-                moveBot(26, 1, 0, 0);
+                //liftCone(1);
+                moveBot(26.5f, 1, 0, 0);
                 moveBot(13, 0, 0, 1);
                 liftCone(2);
                 powerFactor = 0.25;
