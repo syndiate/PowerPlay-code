@@ -137,7 +137,7 @@ public class AutoJavaCone extends LinearOpMode {
         int motorTics;
         double yDif = ((y) > position.get(1)) ? (y) - position.get(1) : position.get(1) - (y);
         double preY = left_drive1.getCurrentPosition();
-        int posNegy = ((y) > position.get(1)) ? 1 : -1;
+        int posNeg = ((y) > position.get(1)) ? 1 : -1;
         right_drive1.setPower(powerFactor * (posNeg));
         right_drive2.setPower(powerFactor * (posNeg));
         left_drive1.setPower(powerFactor * (posNeg));
@@ -166,7 +166,7 @@ public class AutoJavaCone extends LinearOpMode {
         left_drive2.setPower(powerFactor * (- posNegx));
         if (posNegx >= 0) {
             motorTics = left_drive1.getCurrentPosition() + (int)((xDif * intCon)* posNegx);
-            if (posNegy == -1)
+            if (posNeg == -1)
             {
                 while ((left_drive1.getCurrentPosition() > motorTics) && opModeIsActive()) {
                     telemetry.addData("pos:", left_drive1.getCurrentPosition());
