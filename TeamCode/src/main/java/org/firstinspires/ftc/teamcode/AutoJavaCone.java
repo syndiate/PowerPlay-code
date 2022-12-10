@@ -274,6 +274,10 @@ public class AutoJavaCone extends LinearOpMode {
                 liftPos = 2650;
                 break;
             }
+            case -1: {
+                liftPos = 100;
+                break;
+            }
         }
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setTargetPosition(liftPos);

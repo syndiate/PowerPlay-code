@@ -19,20 +19,20 @@ public class AutoJavaConeRight extends AutoJavaCone {
             telemetry.update();
             pos = sleeveDetection.getPosition();
         }
+        camera.closeCameraDevice();
 
-        telemetry.addLine("Waiting for start");
+        telemetry.addLine("Running");
         telemetry.update();
         waitForStart();
 
         startPressed = true;
         boolean stop = false;
-        camera.closeCameraDevice();
 
         while (opModeIsActive())
         {
             if (!stop) {
                 clawBot();
-                liftCone(1);
+                liftCone(-1);
                 moveBot(26, 1, 0, 0);
                 moveBot(13, 0, 0, -1);
                 liftCone(2);

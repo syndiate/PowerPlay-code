@@ -32,23 +32,23 @@ public class AutoJavaConeLeft extends AutoJavaCone {
         {
             if (!stop) {
                 clawBot();
-                liftCone(1);
+                liftCone(0);
                 moveBot(26, 1, 0, 0);
-                moveBot(13, 0, 0, 1);
+                moveBot(17, 0, 0, 1);
                 liftCone(2);
                 powerFactor = 0.25;
-                moveBot(2.25f, 1, 0, 0);
+                moveBot(3, 1, 0, 0);
                 sleep(1000);
                 liftCone(1);
                 sleep(500);
                 clawBot();
-                moveBot(3, -1, 0, 0);
+                moveBot(2, -1, 0, 0);
                 liftCone(-1);
                 powerFactor = startingPF;
                 switch (pos) {
                     case RIGHT: {
                         moveBot(1, 1, 0, 0);
-                        moveBot(11, 0, 0, -1);
+                        moveBot(11, 0, 0, 1);
                         break;
                     }
                     case CENTER: {
@@ -56,7 +56,7 @@ public class AutoJavaConeLeft extends AutoJavaCone {
                         break;
                     }
                     case LEFT: {
-                        moveBot(43, 0, 0, 1);
+                        moveBot(43, 0, 0, -1);
                         break;
                     }
                 }
