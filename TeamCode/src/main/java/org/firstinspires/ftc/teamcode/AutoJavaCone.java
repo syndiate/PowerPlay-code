@@ -30,7 +30,7 @@ public class AutoJavaCone extends LinearOpMode {
     String webcamName = "Webcam 1";
 
 
-    double powerFactor = 0.75;
+    double powerFactor = 0.5;
     double startingPF = 0;
     boolean startPressed = false;
     boolean clawClosed = false;
@@ -50,7 +50,7 @@ public class AutoJavaCone extends LinearOpMode {
         right_drive2.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        clawBot();
+        //clawBot();
         // stop and reset encoder goes in init motors don't change
         // claw things here
         powerFactor = 0.6;
