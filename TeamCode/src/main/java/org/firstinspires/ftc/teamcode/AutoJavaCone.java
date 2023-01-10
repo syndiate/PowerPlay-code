@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,7 +12,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
-public class AutoJavaCone extends LinearOpMode {
+public abstract class AutoJavaCone extends LinearOpMode {
 
     public DcMotorEx right_drive1;
     public DcMotorEx right_drive2;
@@ -29,7 +27,7 @@ public class AutoJavaCone extends LinearOpMode {
     OpenCvCamera camera;
     String webcamName = "Webcam 1";
 
-    double powerFactor = 0.75;
+    double powerFactor = 0.5;
     double startingPF = 0;
     boolean startPressed = false;
     boolean clawClosed = false;
@@ -49,7 +47,7 @@ public class AutoJavaCone extends LinearOpMode {
         right_drive2.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        clawBot();
+        //clawBot();
         // stop and reset encoder goes in init motors don't change
         // claw things here
         powerFactor = 0.6;
@@ -248,6 +246,10 @@ public class AutoJavaCone extends LinearOpMode {
     public void liftCone(int level) {
         int liftPos = 0;
         switch (level) {
+            case -1: {
+                liftPos = 100;
+                break;
+            }
             case 0: {
                 liftPos = 800;
                 break;
@@ -269,8 +271,6 @@ public class AutoJavaCone extends LinearOpMode {
         lift.setPower(0);
     }
 
-    public void runOpMode() {
-
-    }
+    public abstract void runOpMode();
 
 }

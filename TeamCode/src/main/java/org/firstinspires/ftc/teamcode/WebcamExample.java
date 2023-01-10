@@ -43,6 +43,7 @@ public class WebcamExample extends LinearOpMode
 {
     OpenCvWebcam webcam;
     boolean startPressed = false;
+
     void updateLevel(int level) {
         telemetry.addData("level", level);
         telemetry.update();

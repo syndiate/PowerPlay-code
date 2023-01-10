@@ -49,26 +49,27 @@ public class DriveJava extends LinearOpMode {
          * Wait for the user to press start on the Driver Station
          */
         waitForStart();
-        if (opModeIsActive()) {
-            // Put run blocks here.
-            telemetry.update();
-            while (opModeIsActive()) {
+        if (!opModeIsActive()) return;
 
-                callSpeedChange();
-                lift.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.5);
-                clawBot(gamepad2.right_bumper, gamepad2.left_bumper);
-                moveBot(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
-                // Put loop blocks here.
-            }
+        // Put run blocks here.
+        telemetry.update();
+        while (opModeIsActive()) {
+
+            callSpeedChange();
+            lift.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.5);
+            clawBot(gamepad2.right_bumper, gamepad2.left_bumper);
+            moveBot(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
+            // Put loop blocks here.
+
         }
     }
 
     /**
      * Describe this function...
      */
-    void callSpeedChange()
+    private void callSpeedChange()
     {
-        if(this.gamepad1.right_trigger > 0 && !speedChangedUp)
+        if (this.gamepad1.right_trigger > 0 && !speedChangedUp)
         {
             speedChangedUp = true;
             speedChange(true);
@@ -88,7 +89,7 @@ public class DriveJava extends LinearOpMode {
         }
     }
 
-    void speedChange(boolean faster)
+    private void speedChange(boolean faster)
     {
 
         if (faster && speedChangeValue < 2)
@@ -109,7 +110,7 @@ public class DriveJava extends LinearOpMode {
                 powerFactor = 0.4;
                 break;
             case 2:
-                powerFactor = 0.6;
+                 powerFactor = 0.6;
                 break;
             case 3:
                 powerFactor = 0.8;
