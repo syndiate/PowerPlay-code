@@ -12,12 +12,11 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.slf4j.event.Level;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "AutoJava", group = "Auto")
-public class AutoJava extends LinearOpMode {
+@Autonomous(name = "AutoJavaLegacy", group = "Auto")
+public class AutoJavaLegacy extends LinearOpMode {
     private DcMotorEx right_drive1;
     private DcMotorEx right_drive2;
     private DcMotorEx left_drive1;

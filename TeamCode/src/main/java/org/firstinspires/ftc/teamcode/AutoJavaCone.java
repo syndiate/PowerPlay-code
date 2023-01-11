@@ -23,16 +23,20 @@ public abstract class AutoJavaCone extends LinearOpMode {
     public Servo claw2;
     public volatile SleeveDetection.ParkingPosition pos;
 
-    SleeveDetection sleeveDetection;
-    OpenCvCamera camera;
-    String webcamName = "Webcam 1";
+    public SleeveDetection sleeveDetection;
+    public OpenCvCamera camera;
+    private final String webcamName = "Webcam 1";
 
-    double powerFactor = 0.5;
-    double startingPF = 0;
-    boolean startPressed = false;
-    boolean clawClosed = false;
-    ArrayList < Double > position = new ArrayList < Double > ();
+    public double powerFactor = 0.5;
+    public double startingPF = 0;
+    public boolean startPressed = false;
+    private boolean clawClosed = false;
+
+    ArrayList<Double> position = new ArrayList<>();
     double intCon = 19.8375;
+
+
+
 
     public void initMotors() {
         right_drive1 = hardwareMap.get(DcMotorEx.class, "right_drive1");
@@ -56,7 +60,9 @@ public abstract class AutoJavaCone extends LinearOpMode {
         position.add(18.0);
     }
 
+
     public void initCamera() {
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
         sleeveDetection = new SleeveDetection();
@@ -74,29 +80,42 @@ public abstract class AutoJavaCone extends LinearOpMode {
                 telemetry.update();
             }
         });
+
     }
+
+
+    public void updateParkingPos() {
+        telemetry.addData("YCM: ", sleeveDetection.getYelPercent() + " " +
+                    sleeveDetection.getCyaPercent() + " " + sleeveDetection.getMagPercent());
+        telemetry.addData("ROTATION1: ", sleeveDetection.getPosition());
+        telemetry.update();
+        pos = sleeveDetection.getPosition();
+    }
+
+
 
 
     private void logPosition() {
         telemetry.addData("pos:", left_drive1.getCurrentPosition());
         telemetry.update();
     }
-
     private void setPosition(int fixedVal, double offset) {
         logPosition();
         position.set(fixedVal, position.get(fixedVal) + (((left_drive1.getCurrentPosition()) - offset) / intCon));
     }
 
 
+
+
     public void moveBot(double x, double y, boolean straight) {
 
         double yDif = (y > position.get(1)) ? y - position.get(1) : position.get(1) - y;
         double preY = left_drive1.getCurrentPosition();
+        double preX = left_drive1.getCurrentPosition();
 
         if (straight) {
 
             double xDif = (x > position.get(0)) ? x - position.get(0) : position.get(0) - x;
-            double preX = left_drive1.getCurrentPosition();
             double percent = Math.atan(xDif / yDif);
             double vertical = (y > position.get(1)) ? 1 : -1;
             double horizontal = (x > position.get(0)) ? 1 : -1;
@@ -111,7 +130,7 @@ public abstract class AutoJavaCone extends LinearOpMode {
             left_drive1.setPower(powerFactor * (vertical + horizontal));
             left_drive2.setPower(powerFactor * ((vertical - horizontal)));
 
-            int motorTics = left_drive1.getCurrentPosition() + (int)((distIN * intCon) * posNeg);
+            int motorTics = left_drive1.getCurrentPosition() + (int) ((distIN * intCon) * posNeg);
 
             if (horizontal >= 0) {
                 if (posNeg == -1) {
@@ -129,12 +148,6 @@ public abstract class AutoJavaCone extends LinearOpMode {
                 }
             }
 
-            right_drive1.setPower(0);
-            right_drive2.setPower(0);
-            left_drive1.setPower(0);
-            left_drive2.setPower(0);
-            telemetry.update();
-
         } else {
 
             int posNegY = ((y) > position.get(1)) ? 1 : -1;
@@ -144,7 +157,7 @@ public abstract class AutoJavaCone extends LinearOpMode {
             left_drive1.setPower(powerFactor * (posNegY));
             left_drive2.setPower(powerFactor * (posNegY));
 
-            int motorTics = left_drive1.getCurrentPosition() + (int)((yDif * intCon) * posNegY);
+            int motorTics = left_drive1.getCurrentPosition() + (int) ((yDif * intCon) * posNegY);
 
             if (posNegY == -1) {
                 while ((left_drive1.getCurrentPosition() > motorTics) && opModeIsActive()) {
@@ -159,14 +172,13 @@ public abstract class AutoJavaCone extends LinearOpMode {
             setPosition(1, preY);
             double xDif = Math.abs(x - position.get(0));
             int posNegX = (x > position.get(0)) ? 1 : -1;
-            double preX = left_drive1.getCurrentPosition();
 
             right_drive1.setPower(powerFactor * (-posNegX));
             right_drive2.setPower(powerFactor * (posNegX));
             left_drive1.setPower(powerFactor * (posNegX));
             left_drive2.setPower(powerFactor * (-posNegX));
 
-            motorTics = left_drive1.getCurrentPosition() + (int)((xDif * intCon) * posNegX);
+            motorTics = left_drive1.getCurrentPosition() + (int) ((xDif * intCon) * posNegX);
 
             if (posNegX >= 0) {
                 while ((left_drive1.getCurrentPosition() > motorTics) && opModeIsActive()) {
@@ -180,13 +192,12 @@ public abstract class AutoJavaCone extends LinearOpMode {
                 setPosition(0, preX);
             }
 
-            right_drive1.setPower(0);
-            right_drive2.setPower(0);
-            left_drive1.setPower(0);
-            left_drive2.setPower(0);
-            telemetry.update();
-
         }
+        right_drive1.setPower(0);
+        right_drive2.setPower(0);
+        left_drive1.setPower(0);
+        left_drive2.setPower(0);
+        telemetry.update();
         position.set(0, x);
         position.set(1, y);
     }
@@ -239,12 +250,12 @@ public abstract class AutoJavaCone extends LinearOpMode {
         } else {
             claw1.setPosition(0.04);
             claw2.setPosition(0.8);
-
         }
     }
 
     public void liftCone(int level) {
         int liftPos = 0;
+
         switch (level) {
             case -1: {
                 liftPos = 100;
@@ -263,6 +274,7 @@ public abstract class AutoJavaCone extends LinearOpMode {
                 break;
             }
         }
+
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setTargetPosition(liftPos);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);

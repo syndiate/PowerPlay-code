@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "JavaDrive")
 public class DriveJava extends LinearOpMode {
+
     private DcMotor right_drive1;
     private DcMotor right_drive2;
     private DcMotor left_drive1;
@@ -15,12 +16,13 @@ public class DriveJava extends LinearOpMode {
     private DcMotor lift;
     private Servo claw1;
     private Servo claw2;
-    double powerFactor = 0;
-    int speedChangeValue = 1;
-    boolean speedChangedUp = false;
-    boolean speedChangedDown = false;
+    private double powerFactor = 0;
+    private int speedChangeValue = 1;
+    private boolean speedChangedUp = false;
+    private boolean speedChangedDown = false;
 
     private void initMotors() {
+
         right_drive1 = hardwareMap.get(DcMotor.class, "right_drive1");
         right_drive2 = hardwareMap.get(DcMotor.class, "right_drive2");
         left_drive1 = hardwareMap.get(DcMotor.class, "left_drive1");
@@ -49,17 +51,15 @@ public class DriveJava extends LinearOpMode {
          * Wait for the user to press start on the Driver Station
          */
         waitForStart();
-        if (!opModeIsActive()) return;
-
-        // Put run blocks here.
+        telemetry.addLine("Driver mode initiated");
         telemetry.update();
+
         while (opModeIsActive()) {
 
             callSpeedChange();
             lift.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.5);
             clawBot(gamepad2.right_bumper, gamepad2.left_bumper);
             moveBot(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
-            // Put loop blocks here.
 
         }
     }
@@ -67,8 +67,9 @@ public class DriveJava extends LinearOpMode {
     /**
      * Describe this function...
      */
-    private void callSpeedChange()
+    void callSpeedChange()
     {
+
         if (this.gamepad1.right_trigger > 0 && !speedChangedUp)
         {
             speedChangedUp = true;
@@ -87,9 +88,10 @@ public class DriveJava extends LinearOpMode {
         {
             speedChangedDown = false;
         }
+
     }
 
-    private void speedChange(boolean faster)
+    void speedChange(boolean faster)
     {
 
         if (faster && speedChangeValue < 2)
@@ -127,10 +129,12 @@ public class DriveJava extends LinearOpMode {
         right_drive2.setPower(powerFactor * (-pivot + vertical + horizontal));
         left_drive1.setPower(powerFactor * (pivot + vertical + horizontal));
         left_drive2.setPower(powerFactor * (pivot + (vertical - horizontal)));
+
         right_drive1.setPower(0);
         right_drive2.setPower(0);
         left_drive1.setPower(0);
         left_drive2.setPower(0);
+
     }
 
     private void clawBot(boolean right_bumper, boolean left_bumper)
