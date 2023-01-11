@@ -36,7 +36,7 @@ public class DriveJava extends LinearOpMode {
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         powerFactor = 0.4;
         claw1.setPosition(0.25);
-        claw2.setPosition(0.75);
+        claw2.setPosition(0.65);
 
     }
 
@@ -67,6 +67,7 @@ public class DriveJava extends LinearOpMode {
     /**
      * Describe this function...
      */
+    
     void callSpeedChange()
     {
 
@@ -94,7 +95,7 @@ public class DriveJava extends LinearOpMode {
     void speedChange(boolean faster)
     {
 
-        if (faster && speedChangeValue < 2)
+        if (faster && speedChangeValue < 4)
         {
             speedChangeValue++;
         }
@@ -112,10 +113,13 @@ public class DriveJava extends LinearOpMode {
                 powerFactor = 0.4;
                 break;
             case 2:
-                 powerFactor = 0.6;
+                powerFactor = 0.6;
                 break;
             case 3:
                 powerFactor = 0.8;
+                break;
+            case 4:
+                powerFactor = 1;
                 break;
         }
 
@@ -142,7 +146,7 @@ public class DriveJava extends LinearOpMode {
         if (right_bumper)
         {
             claw1.setPosition(0.15);
-            claw2.setPosition(0.75);
+            claw2.setPosition(0.65);
         }
         else if (left_bumper)
         {
