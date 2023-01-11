@@ -24,7 +24,17 @@ public class AutoJavaConeLeft extends AutoJavaCone {
         startPressed = true;
         if (!opModeIsActive()) return;
 
-
+        /*
+         moveBot(95, 45, false, false);
+                telemetry.addData("x:", position.get(0));
+                telemetry.addData("y:", position.get(1));
+                telemetry.update();
+                sleep(2000);
+                moveBot(101, 18, false, true);
+                telemetry.addData("x:", position.get(0));
+                telemetry.addData("y:", position.get(1));
+                telemetry.update();
+                */
         clawBot();
         //liftCone(0);
         moveBot(32, 1, 0, 0);
