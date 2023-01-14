@@ -48,7 +48,7 @@ public class AutoJavaCone extends LinearOpMode {
 
         right_drive1.setDirection(DcMotorSimple.Direction.REVERSE);
         right_drive2.setDirection(DcMotorSimple.Direction.REVERSE);
-        lift.setDirection(DcMotorSimple.Direction.FORWARD);
+        lift.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //clawBot();
         // stop and reset encoder goes in init motors don't change
@@ -245,7 +245,7 @@ public class AutoJavaCone extends LinearOpMode {
 
     public void clawBot() {
         // other claw function didn't work cause you would always need to call it to be closed
-        clawClosed = !clawClosed;
+
         if (clawClosed) {
             claw1.setPosition(0.15);
             claw2.setPosition(0.75);
@@ -254,6 +254,7 @@ public class AutoJavaCone extends LinearOpMode {
             claw2.setPosition(0.8);
 
         }
+        clawClosed = !clawClosed;
     }
 
 
@@ -263,29 +264,37 @@ public class AutoJavaCone extends LinearOpMode {
         switch (level)
         {
             case 0: {
-                liftPos = 800;
+                liftPos = -800;
                 break;
             }
             case 1: {
-                liftPos = 1500;
+                liftPos = -1500;
                 break;
             }
             case 2: {
-                liftPos = 2650;
+                liftPos = -2650;
                 break;
             }
             case -1: {
-                liftPos = 100;
+                liftPos = -100;
                 break;
             }
         }
-        lift.setDirection(DcMotorSimple.Direction.FORWARD);
+        if (level == -1)
+            lift.setDirection(DcMotorSimple.Direction.REVERSE);
+        else if (level == 1) // positions change -1,2,1 when 2,1 happens direction should change
+            lift.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setTargetPosition(liftPos);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setPower(0.5);
-        while (lift.isBusy()) {
+        lift.setPower(0.1);
+        // after 4 stg lift was introduced, direction had to be reversed and had to add below loc along with -ve lift position
+        // note lift motor is now in opposite direction to previous
+        while (lift.isBusy() && lift.getCurrentPosition() < -1* liftPos) {
             idle();
+            telemetry.addData("Encoder value", lift.getCurrentPosition());
+            telemetry.update();
         }
+
         lift.setPower(0);
     }
 

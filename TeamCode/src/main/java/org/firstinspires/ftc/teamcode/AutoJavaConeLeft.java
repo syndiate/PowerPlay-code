@@ -31,26 +31,29 @@ public class AutoJavaConeLeft extends AutoJavaCone {
         while (opModeIsActive())
         {
             if (!stop) {
+                telemetry.addData("clawClosed", clawClosed);
+                telemetry.update();
                 clawBot();
-                //liftCone(0);
+                sleep(1000);
+                liftCone(-1);
                 moveBot(32, 1, 0, 0);
-                moveBot(4, -1, 0, 0);
+                //moveBot(4, -1, 0, 0);
                 sleep(1000);
                 moveBot(17, 0, 0, 1);
-                //liftCone(2);
+                liftCone(2);
                 powerFactor = 0.25;
-                //moveBot(5, 1, 0, 0);
+                moveBot(5, 1, 0, 0);
                 sleep(1000);
-                //liftCone(1);
+//                liftCone(1);
                 sleep(500);
-                //clawBot();
-                //moveBot(2, -1, 0, 0);
-                //liftCone(-1);
+                clawBot();
+                moveBot(2, -1, 0, 0);
+//                liftCone(-1);
                 powerFactor = startingPF;
                 switch (pos) {
                     case RIGHT: {
-                        moveBot(1, 1, 0, 0);
-                        moveBot(11, 0, 0, 1);
+//                        moveBot(1, 1, 0, 0);
+//                        moveBot(11, 0, 0, 1);
                         break;
                     }
                     case CENTER: {
