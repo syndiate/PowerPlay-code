@@ -112,7 +112,7 @@ public class DriveJava extends LinearOpMode {
                 powerFactor = 0.6;
                 break;
             case 3:
-                powerFactor = 0.8;
+                powerFactor = 1;
                 break;
         }
 
