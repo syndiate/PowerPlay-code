@@ -39,7 +39,7 @@ public class AutoJavaConeLeft extends AutoJavaCone {
                 moveBot(32, 1, 0, 0);
                 //moveBot(4, -1, 0, 0);
                 sleep(1000);
-                moveBot(17, 0, 0, 1);
+                moveBot(22, 0, 0, 1);
                 liftCone(2);
                 powerFactor = 0.25;
                 moveBot(5, 1, 0, 0);
@@ -52,8 +52,8 @@ public class AutoJavaConeLeft extends AutoJavaCone {
                 powerFactor = startingPF;
                 switch (pos) {
                     case RIGHT: {
-//                        moveBot(1, 1, 0, 0);
-//                        moveBot(11, 0, 0, 1);
+ //                       moveBot(1, 1, 0, 0);
+                        moveBot(11, 0, 0, 1);
                         break;
                     }
                     case CENTER: {
