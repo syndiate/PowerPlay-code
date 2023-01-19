@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,7 +12,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
-public class AutoJavaCone extends LinearOpMode {
+public abstract class AutoJavaCone extends LinearOpMode {
 
     public DcMotorEx right_drive1;
     public DcMotorEx right_drive2;
@@ -59,7 +57,7 @@ public class AutoJavaCone extends LinearOpMode {
         position.add(17.0);
     }
 
-    void clawTest() {
+    public void clawTest() {
         for (double i = 0.45; i < 1; i -= 0.05) {
             claw1.setPosition(i);
             telemetry.addData("pos: ", i);
@@ -91,9 +89,38 @@ public class AutoJavaCone extends LinearOpMode {
     }
 
 
-    void moveBot(double x, double y, boolean straight, boolean y2)
+
+    public void removePower() {
+        right_drive1.setPower(0);
+        right_drive2.setPower(0);
+        left_drive1.setPower(0);
+        left_drive2.setPower(0);
+        telemetry.update();
+    }
+
+    public int getRobotPos() {
+        return left_drive1.getCurrentPosition();
+    }
+
+    public void logPosition() {
+        telemetry.addData("pos:", getRobotPos());
+        telemetry.update();
+    }
+
+    public void updateParkingPos() {
+        telemetry.addData("YCM: ", sleeveDetection.getYelPercent() + " " +
+                sleeveDetection.getCyaPercent() + " " + sleeveDetection.getMagPercent());
+        telemetry.addData("ROTATION1: ", sleeveDetection.getPosition());
+        telemetry.update();
+        pos = sleeveDetection.getPosition();
+    }
+
+
+
+
+    public void moveBot(double x, double y, boolean straight, boolean y2)
     {
-        if(straight)
+        if (straight)
         {
             double yDif = (y > position.get(1)) ? y - position.get(1) : position.get(1) - y;
             double xDif = (x > position.get(0)) ? x - position.get(0) : position.get(0) - x;
@@ -253,6 +280,8 @@ public class AutoJavaCone extends LinearOpMode {
         position.set(1, y);
     }
 
+
+
     public void moveBot(float distIN, float vertical, float pivot, float horizontal)
     {
 
@@ -261,37 +290,32 @@ public class AutoJavaCone extends LinearOpMode {
         int posNeg = (vertical >= 0) ? 1 : -1;
         position.set(0, position.get(0) + (distIN * horizontal));
         position.set(1, position.get(1) + (distIN * vertical));
+
         right_drive1.setPower(powerFactor * (-pivot + (vertical - horizontal)));
         right_drive2.setPower(powerFactor * (-pivot + vertical + horizontal));
         left_drive1.setPower(powerFactor * (pivot + vertical + horizontal));
         left_drive2.setPower(powerFactor * (pivot + (vertical - horizontal)));
+
         if (horizontal >= 0) {
             motorTics = left_drive1.getCurrentPosition() + (int)((distIN * intCon)* posNeg);
             if (posNeg == -1)
             {
                 while ((left_drive1.getCurrentPosition() > motorTics) && opModeIsActive()) {
-                    telemetry.addData("pos:", left_drive1.getCurrentPosition());
-                    telemetry.update();
+                    logPosition();
                 }
             } else {
                 while ((left_drive1.getCurrentPosition() < motorTics) && opModeIsActive()) {
-                    telemetry.addData("pos:", left_drive1.getCurrentPosition());
-                    telemetry.update();
+                    logPosition();
                 }
             }
         } else {
             motorTics = right_drive1.getCurrentPosition() + (int)((distIN * intCon)* posNeg);
             while ((right_drive1.getCurrentPosition() < motorTics) && opModeIsActive())
             {
-                telemetry.addData("pos:", left_drive1.getCurrentPosition());
-                telemetry.update();
+                logPosition();
             }
         }
-        right_drive1.setPower(0);
-        right_drive2.setPower(0);
-        left_drive1.setPower(0);
-        left_drive2.setPower(0);
-        telemetry.update();
+        removePower();
 
     }
 
@@ -338,10 +362,13 @@ public class AutoJavaCone extends LinearOpMode {
                 break;
             }
         }
+
         if (level == -1)
             lift.setDirection(DcMotorSimple.Direction.REVERSE);
         else if (level == 1) // positions change -1,2,1 when 2,1 happens direction should change
             lift.setDirection(DcMotorSimple.Direction.FORWARD);
+
+
         lift.setTargetPosition(liftPos);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setPower(0.05);
@@ -357,8 +384,6 @@ public class AutoJavaCone extends LinearOpMode {
     }
 
 
-    public void runOpMode() {
-
-    }
+    public abstract void runOpMode();
 
 }
