@@ -8,17 +8,21 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "JavaDrive")
 public class DriveJava extends LinearOpMode {
+
     private DcMotor right_drive1;
     private DcMotor right_drive2;
     private DcMotor left_drive1;
     private DcMotor left_drive2;
     private DcMotor lift;
+
     private Servo claw1;
     private Servo claw2;
-    double powerFactor = 0;
-    int speedChangeValue = 1;
-    boolean speedChangedUp = false;
-    boolean speedChangedDown = false;
+
+    private double powerFactor = 0;
+    private int speedChangeValue = 1;
+
+    private boolean speedChangedUp = false;
+    private boolean speedChangedDown = false;
 
     private void initMotors() {
         right_drive1 = hardwareMap.get(DcMotor.class, "right_drive1");
@@ -49,25 +53,24 @@ public class DriveJava extends LinearOpMode {
          * Wait for the user to press start on the Driver Station
          */
         waitForStart();
-        if (opModeIsActive()) {
-            // Put run blocks here.
+        telemetry.update();
+
+        while (opModeIsActive()) {
+            callSpeedChange();
+            lift.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 1);
+
+            clawBot(gamepad2.right_bumper, gamepad2.left_bumper);
+            moveBot(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
+
+            telemetry.addData("pivot:", gamepad1.right_stick_x);
             telemetry.update();
-            while (opModeIsActive()) {
-
-                callSpeedChange();
-                lift.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.5);
-
-                clawBot(gamepad2.right_bumper, gamepad2.left_bumper);
-                moveBot(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
-                // Put loop blocks here.
-            }
         }
     }
 
     /**
      * Describe this function...
      */
-    void callSpeedChange()
+    private void callSpeedChange()
     {
         if(this.gamepad1.right_trigger > 0 && !speedChangedUp)
         {
@@ -89,7 +92,7 @@ public class DriveJava extends LinearOpMode {
         }
     }
 
-    void speedChange(boolean faster)
+    private void speedChange(boolean faster)
     {
 
         if (faster && speedChangeValue < 4)

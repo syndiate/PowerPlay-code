@@ -12,35 +12,40 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
+
+
+
 public abstract class AutoJavaCone extends LinearOpMode {
 
     public DcMotorEx right_drive1;
     public DcMotorEx right_drive2;
     public DcMotorEx left_drive1;
     public DcMotorEx left_drive2;
-    public DcMotor lift;
+    public DcMotorEx lift;
     public Servo claw1;
     public Servo claw2;
     public volatile SleeveDetection.ParkingPosition pos;
 
-    SleeveDetection sleeveDetection;
-    OpenCvCamera camera;
-    String webcamName = "Webcam 1";
+    public SleeveDetection sleeveDetection;
+    public OpenCvCamera camera;
+    private final String webcamName = "Webcam 1";
 
 
-    double powerFactor = 0.5;
-    double startingPF = 0;
-    boolean startPressed = false;
-    boolean clawClosed = false;
-    ArrayList<Double> position = new ArrayList<Double>();
-    double intCon = 19.8375;
+    public double powerFactor = 0.5;
+    public double startingPF = 0;
+    public boolean clawClosed = false;
+    private ArrayList<Double> position = new ArrayList<>();
+    private final double intCon = 19.8375;
+
+
+    public volatile boolean updateLiftPos = false;
 
     public void initMotors() {
         right_drive1 = hardwareMap.get(DcMotorEx.class, "right_drive1");
         right_drive2 = hardwareMap.get(DcMotorEx.class, "right_drive2");
         left_drive1 = hardwareMap.get(DcMotorEx.class, "left_drive1");
         left_drive2 = hardwareMap.get(DcMotorEx.class, "left_drive2");
-        lift = hardwareMap.get(DcMotor.class, "lift");
+        lift = hardwareMap.get(DcMotorEx.class, "lift");
         claw1 = hardwareMap.get(Servo.class, "claw1");
         claw2 = hardwareMap.get(Servo.class, "claw2");
         //clawTest();
@@ -48,22 +53,20 @@ public abstract class AutoJavaCone extends LinearOpMode {
         right_drive2.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        right_drive1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        right_drive2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        left_drive1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        left_drive2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         //clawBot();
         // stop and reset encoder goes in init motors don't change
         // claw things here
         powerFactor = 0.6;
         startingPF = powerFactor;
+
         position.add(101.0);
         position.add(17.0);
-    }
-
-    public void clawTest() {
-        for (double i = 0.45; i < 1; i -= 0.05) {
-            claw1.setPosition(i);
-            telemetry.addData("pos: ", i);
-            telemetry.update();
-            sleep(1500);
-        }
     }
 
     public void initCamera() {
@@ -90,6 +93,35 @@ public abstract class AutoJavaCone extends LinearOpMode {
 
 
 
+
+
+    public void clawTest() {
+        for (double i = 0.45; i < 1; i += 0.05) {
+            claw1.setPosition(i);
+            claw2.setPosition(i);
+            telemetry.addData("pos: ", i);
+            telemetry.update();
+            sleep(1000);
+        }
+    }
+
+    public void liftTest() {
+        liftCone(1);
+        sleep(1500);
+        liftCone(2);
+        sleep(2000);
+        liftCone(3);
+        sleep(3000);
+        liftCone(-1);
+        sleep(3500);
+        liftCone(0);
+    }
+
+
+
+
+
+
     public void removePower() {
         right_drive1.setPower(0);
         right_drive2.setPower(0);
@@ -97,6 +129,7 @@ public abstract class AutoJavaCone extends LinearOpMode {
         left_drive2.setPower(0);
         telemetry.update();
     }
+
 
     public int getRobotPos() {
         return left_drive1.getCurrentPosition();
@@ -282,6 +315,8 @@ public abstract class AutoJavaCone extends LinearOpMode {
 
 
 
+
+
     public void moveBot(float distIN, float vertical, float pivot, float horizontal)
     {
 
@@ -341,6 +376,10 @@ public abstract class AutoJavaCone extends LinearOpMode {
         int liftPos = 0;
         switch (level)
         {
+            case -1: {
+                liftPos = -100;
+                break;
+            }
             case 0: {
                 liftPos = -800;
                 break;
@@ -357,10 +396,6 @@ public abstract class AutoJavaCone extends LinearOpMode {
                 liftPos = -4150;
                 break;
             }
-            case -1: {
-                liftPos = -100;
-                break;
-            }
         }
 
         if (level == -1)
@@ -374,12 +409,12 @@ public abstract class AutoJavaCone extends LinearOpMode {
         lift.setPower(0.05);
         // after 4 stg lift was introduced, direction had to be reversed and had to add below loc along with -ve lift position
         // note lift motor is now in opposite direction to previous
+
         while (lift.isBusy() && lift.getCurrentPosition() < -1* liftPos) {
             idle();
             telemetry.addData("Encoder value", lift.getCurrentPosition());
             telemetry.update();
         }
-
         lift.setPower(0);
     }
 
