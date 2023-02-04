@@ -24,7 +24,6 @@ public class AutoJavaMultiConeLeft extends AutoJavaCone {
         telemetry.update();
         waitForStart();
 
-        startPressed = true;
         boolean stop = false;
         powerFactor = 1;
         camera.closeCameraDevice();

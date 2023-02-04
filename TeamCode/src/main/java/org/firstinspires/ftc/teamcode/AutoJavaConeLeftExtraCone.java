@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Autonomous(name = "AutoJavaConeLeftExtraCone", group = "Auto")
 public class AutoJavaConeLeftExtraCone extends AutoJavaCone {
+
 
     @Override
     public void runOpMode()
@@ -22,14 +24,19 @@ public class AutoJavaConeLeftExtraCone extends AutoJavaCone {
 
         powerFactor = 1;
         startingPF = powerFactor;
-//        liftTest();
 
+        moveBot(50, 1, 0, 0);
+        moveBot(6, 0, -1, 0);
+        moveBot(3, 0, 0, -1);
+        moveBot(3, 0, -0.69f, -1);
+        moveBot(4, 0, 0, -1);
+/*
         moveBot(35, 0, 0, 1);
         sleep(500);
         moveBot(72, 1, 0, 0);
         //liftCone(3);
         moveBot(19.5f, 0, 0, -1);
-
+*/
 
         //liftCone(3);
         //sleep(1500);

@@ -142,7 +142,7 @@ public abstract class AutoJavaCone extends LinearOpMode {
 
     public void updateParkingPos() {
         telemetry.addData("YCM: ", sleeveDetection.getYelPercent() + " " +
-                sleeveDetection.getCyaPercent() + " " + sleeveDetection.getMagPercent());
+                sleeveDetection.getCyaPercent() + sleeveDetection.getMagPercent());
         telemetry.addData("ROTATION1: ", sleeveDetection.getPosition());
         telemetry.update();
         pos = sleeveDetection.getPosition();

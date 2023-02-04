@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+//robot must be 3 inches from the left and must be against the wall
 @Autonomous(name = "AutoJavaConeLeft", group = "Auto")
 public class AutoJavaConeLeft extends AutoJavaCone {
 
@@ -29,7 +30,8 @@ public class AutoJavaConeLeft extends AutoJavaCone {
 
         sleep(1000);
         liftCone(-1);
-        moveBot(2, 0, 0, 1);
+//        moveBot(2, 0, 0, 1);
+        moveBot(3.75f, 0, 0, 1);
         moveBot(35, 1, 0, 0);
         moveBot(5, 1, 0, 0);
 
@@ -40,13 +42,14 @@ public class AutoJavaConeLeft extends AutoJavaCone {
 
         moveBot(35.5f, 0, 0, 1);
         sleep(500);
-        moveBot(1.35f, 1, 0, 0);
+        moveBot(1.05f, 1, 0, 0);
+        sleep(500);
         moveBot(20.5f, 0, 0, 1);
 
         liftCone(3);
         powerFactor = 0.25;
 
-        moveBot(5, 1, 0, 0);
+        moveBot(3, 1, 0, 0);
         sleep(1000);
 //               liftCone(1);
         sleep(500);
@@ -66,6 +69,7 @@ public class AutoJavaConeLeft extends AutoJavaCone {
                 moveBot(9, 0, 0, -1);
                 sleep(500);
                 moveBot(2, -1, 0, 0);
+                sleep(500);
                 moveBot(43, 0, 0, -1);
                 moveBot(2, -1, 0, 0);
                 break;
@@ -74,9 +78,11 @@ public class AutoJavaConeLeft extends AutoJavaCone {
                 moveBot(9, 0, 0, -1);
                 sleep(500);
                 moveBot(2, -1, 0, 0);
+                sleep(500);
                 moveBot(47.5f, 0, 0, -1);
                 sleep(500);
-                moveBot(2.75f, -1, 0, 0);
+                moveBot(1.25f, -1, 0, 0);
+                sleep(500);
                 moveBot(39.5f, 0, 0, -1);
                 moveBot(1, -1, 0, 0);
                 break;

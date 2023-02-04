@@ -24,6 +24,8 @@ public class DriveJava extends LinearOpMode {
     private boolean speedChangedUp = false;
     private boolean speedChangedDown = false;
 
+    private float pivot = 0;
+
     private void initMotors() {
         right_drive1 = hardwareMap.get(DcMotor.class, "right_drive1");
         right_drive2 = hardwareMap.get(DcMotor.class, "right_drive2");
@@ -62,7 +64,7 @@ public class DriveJava extends LinearOpMode {
             clawBot(gamepad2.right_bumper, gamepad2.left_bumper);
             moveBot(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
 
-            telemetry.addData("pivot:", gamepad1.right_stick_x);
+            telemetry.addData("Pivot:", gamepad1.right_stick_x);
             telemetry.update();
         }
     }
@@ -95,7 +97,7 @@ public class DriveJava extends LinearOpMode {
     private void speedChange(boolean faster)
     {
 
-        if (faster && speedChangeValue < 4)
+        if (faster && speedChangeValue < 9)
         {
             speedChangeValue++;
         }
@@ -119,7 +121,22 @@ public class DriveJava extends LinearOpMode {
                 powerFactor = 0.8;
                 break;
             case 4:
-                powerFactor = 1;
+                powerFactor = 1.0;
+                break;
+            case 5:
+                powerFactor = 1.2;
+                break;
+            case 6:
+                powerFactor = 1.4;
+                break;
+            case 7:
+                powerFactor = 1.6;
+                break;
+            case 8:
+                powerFactor = 1.8;
+                break;
+            case 9:
+                powerFactor = 2.0;
                 break;
         }
 
